@@ -1,0 +1,50 @@
+{
+  "name": "hc-fe",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://homecleaners.azurewebsites.net/api/",
+  "dependencies": {
+    "@casl/ability": "^3.0.0",
+    "@casl/react": "^1.0.1",
+    "@material-ui/core": "^4.9.13",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.53",
+    "@material-ui/pickers": "^3.2.10",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "formik": "^2.1.4",
+    "formik-material-ui": "^2.0.0-beta.1",
+    "material-table": "^1.57.2",
+    "material-ui-formik-components": "^0.7.1",
+    "moment-timezone": "^0.5.31",
+    "mui-datatables": "^2.14.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-dropdown-tree-select": "^2.3.7",
+    "react-dropzone": "^11.0.3",
+    "react-moment": "^0.9.7",
+    "react-responsive": "^8.1.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "react-swipeable-views": "^0.13.9",
+    "superagent": "^6.0.0",
+    "wretch": "^1.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "heroku-run-build-script": true
+}
