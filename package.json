@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://homecleaners.azurewebsites.net/api/",
+  "resolutions": {
+    "material-table/jspdf": "^2.1.0"
+  },
   "dependencies": {
     "@casl/ability": "^3.0.0",
     "@casl/react": "^1.0.1",
@@ -15,7 +18,7 @@
     "@testing-library/user-event": "^7.1.2",
     "formik": "^2.1.4",
     "formik-material-ui": "^2.0.0-beta.1",
-    "material-table": "^1.57.2",
+    "material-table": "^1.69.0",
     "material-ui-formik-components": "^0.7.1",
     "moment-timezone": "^0.5.31",
     "mui-datatables": "^2.14.0",

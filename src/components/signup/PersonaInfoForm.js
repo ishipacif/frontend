@@ -57,14 +57,14 @@ class PersonaInfoForm extends React.Component {
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12}>
             <Field
-              id="accountType"
-              name="accountType"
+              id="persona.accountType"
+              name="persona.accountType"
               label="Type de compte"
               autoFocus
               required
               fullWidth
               options={[
-                { label: "Client", value: "client" },
+                { label: "Client", value: "customer" },
                 { label: "Professionnel", value: "professional" }
               ]}
               component={Select}
@@ -73,23 +73,23 @@ class PersonaInfoForm extends React.Component {
           <Grid item xs={12} sm={8}>
             <Grid item xs={12}>
               <Field
-                id="firstName"
-                name="firstName"
+                id="persona.firstName"
+                name="persona.firstName"
                 label="Prénom"
                 required
                 fullWidth
-                value={values.firstName}
+                value={values.persona.firstName}
                 component={TextField}
               />
             </Grid>
             <Grid item xs={12}>
               <Field
-                id="lastName"
-                name="lastName"
+                id="persona.lastName"
+                name="persona.lastName"
                 label="Nom"
                 required
                 fullWidth
-                value={values.lastName}
+                value={values.persona.lastName}
                 component={TextField}
               />
             </Grid>
@@ -97,10 +97,10 @@ class PersonaInfoForm extends React.Component {
 
           <Grid item xs={12} sm={4}>
             <Field
-              name="picture"
+              name="persona.picture"
               value={
                 this.state.uploadedPicture === null
-                  ? values.picture
+                  ? values.persona.picture
                   : this.state.uploadedPicture
               }
               render={({ field, form }) => (
@@ -112,7 +112,7 @@ class PersonaInfoForm extends React.Component {
                     form.setFieldValue(
                       "picture",
                       this.state.uploadedPicture === null
-                        ? values.picture
+                        ? values.persona.picture
                         : this.state.uploadedPicture
                     );
                   }}
@@ -131,17 +131,21 @@ class PersonaInfoForm extends React.Component {
                     <input {...getInputProps()} />
                     {
                       <center>
-                        {(values.picture !== null ||
+                        {(values.persona.picture !== null ||
                           this.state.uploadedPicture !== null) && (
                           <div>
                             <img
                               width="100%"
                               src={
                                 this.state.uploadedPicture === null
-                                  ? values.picture
+                                  ? values.persona.picture
                                   : this.state.uploadedPicture
                               }
-                              alt={values.first_name + " " + values.last_name}
+                              alt={
+                                values.persona.firstName +
+                                " " +
+                                values.persona.lastName
+                              }
                             />
                           </div>
                         )}
@@ -159,68 +163,68 @@ class PersonaInfoForm extends React.Component {
 
           <Grid item xs={9}>
             <Field
-              id="streetName"
-              name="streetName"
+              id="persona.address.streetName"
+              name="persona.address.streetName"
               label="Nom de la rue"
               required
               fullWidth
-              value={values.streetName}
+              value={values.persona.address.streetName}
               component={TextField}
             />
           </Grid>
           <Grid item xs={3}>
             <Field
-              id="plotNumber"
-              name="plotNumber"
+              id="persona.address.plotNumber"
+              name="persona.address.plotNumber"
               label="Numéro"
               required
               fullWidth
-              value={values.plotNumber}
+              value={values.persona.address.plotNumber}
               component={TextField}
             />
           </Grid>
           <Grid item xs={12} sm={8}>
             <Field
-              id="city"
-              name="city"
+              id="persona.address.city"
+              name="persona.address.city"
               label="Ville"
               required
               fullWidth
-              value={values.city}
+              value={values.persona.address.city}
               component={TextField}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Field
-              id="postCode"
-              name="postCode"
+              id="persona.address.postalCode"
+              name="persona.address.postalCode"
               label="Code postal"
               required
               fullWidth
               type="number"
-              value={values.postCode}
+              value={values.persona.address.postalCode}
               component={TextField}
             />
           </Grid>
           <Grid item xs={12} sm={7}>
             <Field
-              id="email"
-              name="email"
+              id="persona.email"
+              name="persona.email"
               label="Courriel"
               required
               fullWidth
-              value={values.email}
+              value={values.persona.email}
               component={TextField}
             />
           </Grid>
           <Grid item xs={12} sm={5}>
             <Field
-              id="phoneNumber"
-              name="phoneNumber"
+              id="persona.phoneNumber"
+              name="persona.phoneNumber"
               label="Numero de téléphone"
               required
               fullWidth
-              value={values.phoneNumber}
+              value={values.persona.phoneNumber}
               component={TextField}
             />
           </Grid>

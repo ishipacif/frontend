@@ -190,7 +190,26 @@ class Signup extends React.Component {
               {
                 <React.Fragment>
                   <Formik
-                    initialValues={{
+                    initialValues={
+                      {
+                        persona: {
+                          accountType: "",
+                          firstName: "",
+                          lastName: "",
+                          email: "",
+                          phoneNumber: "",
+                          address: {
+                            streetName: "",
+                            plotNumber: "",
+                            city: "",
+                            postalCode: ""
+                          }
+                        },
+                        password: "",
+                        passwordComfirm: ""
+                      }
+
+                      /*  {
                       accountType: "",
                       firstName: "",
                       lastName: "",
@@ -204,36 +223,37 @@ class Signup extends React.Component {
                       geoCoords: "",
                       streetName: "",
                       picture: null
-                    }}
+                    } */
+                    }
                     validate={values => {
                       let errors = {};
-                      if (!values.firstName) {
-                        errors.firstName = "Obligatoire";
+                      if (!values.persona.firstName) {
+                        errors.persona.firstName = "Obligatoire";
                       }
-                      if (!values.lastName) {
-                        errors.lastName = "Obligatoire";
+                      if (!values.persona.lastName) {
+                        errors.persona.lastName = "Obligatoire";
                       }
-                      if (!values.streetName) {
-                        errors.streetName = "Obligatoire";
+                      if (!values.persona.address.streetName) {
+                        errors.persona.address.streetName = "Obligatoire";
                       }
-                      if (!values.plotNumber) {
-                        errors.plotNumber = "Obligatoire";
+                      if (!values.persona.address.plotNumber) {
+                        errors.persona.address.plotNumber = "Obligatoire";
                       }
-                      if (!values.city) {
-                        errors.city = "Obligatoire";
+                      if (!values.persona.address.city) {
+                        errors.persona.address.city = "Obligatoire";
                       }
-                      if (!values.postCode) {
-                        errors.postCode = "Obligatoire";
+                      if (!values.persona.address.postalCode) {
+                        errors.persona.address.postalCode = "Obligatoire";
                       }
                       if (!values.password) {
                         errors.password = "Obligatoire";
                       }
                       if (
                         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                          values.email
+                          values.persona.email
                         )
                       ) {
-                        errors.email =
+                        errors.persona.email =
                           "Vous devez fournir une adresse email valide";
                       }
 
@@ -242,7 +262,7 @@ class Signup extends React.Component {
                           "Les mots de passe doivent comporter au moins 8 caractères.";
                       }
 
-                      if (values.email === values.password) {
+                      if (values.persona.email === values.password) {
                         errors.password =
                           "Votre mot de passe ne doit pas être le même que votre email";
                       }
@@ -250,15 +270,19 @@ class Signup extends React.Component {
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
                       let response = undefined;
-                      values.picture = this.state.pictureToUpload;
-                      if (values.accountType === "client") {
-                        response = await PersonasData.createUpdateCustomer(
-                          values
-                        );
+                      values.persona.picture = this.state.pictureToUpload;
+                      console.log(values);
+                      // debugger;
+                      if (values.persona.accountType === "customer") {
+                        response = await PersonasData.createUpdateCustomer({
+                          customer: values.persona,
+                          password: values.password
+                        });
                       } else {
-                        response = await PersonasData.createUpdateProfessional(
-                          values
-                        );
+                        response = await PersonasData.createUpdateProfessional({
+                          professional: values.persona,
+                          password: values.password
+                        });
                       }
                       console.log(response);
                       if (response.status === 201 || response.status === 200) {

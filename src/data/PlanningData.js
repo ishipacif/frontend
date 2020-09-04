@@ -2,9 +2,7 @@ import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PlanningData {
   getProfessionalPlannings() {
-    return wretch(
-      "http://homecleaners.azurewebsites.net/api/plannings/professional"
-    )
+    return wretch(process.env.REACT_APP_API_URL + "/plannings/professional")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -18,7 +16,8 @@ class PlanningData {
 
   getProfessionalsByPlanning(planningId) {
     return wretch(
-      "http://homecleaners.azurewebsites.net/api/plannings/getprofessionals/" +
+      process.env.REACT_APP_API_URL +
+        "/plannings/getprofessionals/" +
         planningId
     )
       .headers({
@@ -33,9 +32,7 @@ class PlanningData {
   }
 
   getCustomerPlannings() {
-    return wretch(
-      "http://homecleaners.azurewebsites.net/api/plannings/customer"
-    )
+    return wretch(process.env.REACT_APP_API_URL + "/plannings/customer")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -48,7 +45,7 @@ class PlanningData {
   }
 
   getStatus() {
-    return wretch("http://homecleaners.azurewebsites.net/api/statuses")
+    return wretch(process.env.REACT_APP_API_URL + "/statuses")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -61,7 +58,7 @@ class PlanningData {
   }
 
   getStatusById(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/statuses/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/statuses/" + id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -75,7 +72,7 @@ class PlanningData {
 
   getPlanningById(id) {
     if (id !== "0") {
-      return wretch("http://homecleaners.azurewebsites.net/api/plannings/" + id)
+      return wretch(process.env.REACT_APP_API_URL + "/plannings/" + id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -91,9 +88,7 @@ class PlanningData {
   }
 
   updateStatus(params) {
-    return wretch(
-      "http://homecleaners.azurewebsites.net/api/plannings/" + params.id
-    )
+    return wretch(process.env.REACT_APP_API_URL + "/plannings/" + params.id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -107,7 +102,7 @@ class PlanningData {
   }
 
   deletePlanning(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/plannings/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/plannings/" + id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -121,7 +116,7 @@ class PlanningData {
 
   createUpdatePlanning(params) {
     if (params.planning[0].id === undefined || params.planning[0].id === "") {
-      return wretch("http://homecleaners.azurewebsites.net/api/plannings")
+      return wretch(process.env.REACT_APP_API_URL + "/plannings")
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -134,8 +129,7 @@ class PlanningData {
         .res();
     } else {
       return wretch(
-        "http://homecleaners.azurewebsites.net/api/plannings/" +
-          params.planning[0].id
+        process.env.REACT_APP_API_URL + "/plannings/" + params.planning[0].id
       )
         .headers({
           "access-token": auth_params.accessToken,

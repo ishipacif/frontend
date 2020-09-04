@@ -105,14 +105,14 @@ class SiteHeader extends Component {
                         </MenuItem>
                         <MenuItem
                           component={Link}
-                          to="/category/2"
+                          to="/category/Interieur"
                           onClick={this.handleClose}
                         >
                           L'interieur
                         </MenuItem>
                         <MenuItem
                           component={Link}
-                          to="/category/1"
+                          to="/category/Exterieur"
                           onClick={this.handleClose}
                         >
                           L'exterieur
@@ -157,10 +157,10 @@ class SiteHeader extends Component {
             <Button component={Link} to="/">
               Acceuil
             </Button>
-            <Button component={Link} to="/category/2">
+            <Button component={Link} to="/category/Interieur">
               L'interieur
             </Button>
-            <Button component={Link} to="/category/1">
+            <Button component={Link} to="/category/Exterieur">
               L'exterieur
             </Button>
             {this.state.isAuthenticated && (

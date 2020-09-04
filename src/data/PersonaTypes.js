@@ -2,7 +2,7 @@ import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PersonaTypes {
   getPersonaTypes() {
-    return wretch("http://homecleaners.azurewebsites.net/api/types")
+    return wretch(process.env.REACT_APP_API_URL + "/types")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -16,21 +16,21 @@ class PersonaTypes {
 
   getPersonaTypesForFront() {
     return wretch(
-      "http://homecleaners.azurewebsites.net/api/types/confirmed_personas_types"
+      process.env.REACT_APP_API_URL + "/types/confirmed_personas_types"
     )
       .get()
       .json();
   }
 
   getPersonaType(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/types/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/types/" + id)
       .get()
       .json();
   }
 
   createUpdatePersonaType(params) {
     if (params.id === undefined || params.id === "") {
-      return wretch("http://homecleaners.azurewebsites.net/api/types")
+      return wretch(process.env.REACT_APP_API_URL + "/types")
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -42,9 +42,7 @@ class PersonaTypes {
         .post()
         .res();
     } else {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/types/" + params.id
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/types/" + params.id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,

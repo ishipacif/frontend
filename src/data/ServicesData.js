@@ -3,19 +3,19 @@ const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class ServicesData {
   // Services
   getServices() {
-    return wretch("http://homecleaners.azurewebsites.net/api/services")
+    return wretch(process.env.REACT_APP_API_URL + "/services")
       .get()
       .json();
   }
 
   getService(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/services/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/services/" + id)
       .get()
       .json();
   }
 
   deleteService(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/services/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/services/" + id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -29,7 +29,7 @@ class ServicesData {
 
   createUpdateService(params) {
     if (params.id === undefined || params.id === "") {
-      return wretch("http://homecleaners.azurewebsites.net/api/services")
+      return wretch(process.env.REACT_APP_API_URL + "/services")
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -41,9 +41,7 @@ class ServicesData {
         .post()
         .res();
     } else {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/services/" + params.id
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/services/" + params.id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -59,30 +57,29 @@ class ServicesData {
 
   // Categories
   getCategories() {
-    return wretch("http://homecleaners.azurewebsites.net/api/categories")
+    return wretch(process.env.REACT_APP_API_URL + "/categories")
       .get()
       .json();
   }
 
-  getServicesCategory(id) {
+  getServicesCategory(category) {
     return wretch(
-      "http://homecleaners.azurewebsites.net/api/Category/GetCategory/" + id
+      process.env.REACT_APP_API_URL + "/Services?category=" + category
     )
       .get()
       .json();
   }
 
-  getServicesByCategory(id) {
+  getServicesByCategory(category) {
     return wretch(
-      "http://homecleaners.azurewebsites.net/api/Service/GetServicesByCategory/" +
-        id
+      process.env.REACT_APP_API_URL + "/Services?category=" + category
     )
       .get()
       .json();
   }
 
   deleteServicesCategory(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/categories/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/categories/" + id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -96,7 +93,7 @@ class ServicesData {
 
   createUpdateCategories(params) {
     if (params.id === undefined || params.id === "") {
-      return wretch("http://homecleaners.azurewebsites.net/api/categories")
+      return wretch(process.env.REACT_APP_API_URL + "/categories")
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -108,9 +105,7 @@ class ServicesData {
         .post()
         .res();
     } else {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/categories/" + params.id
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/categories/" + params.id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,

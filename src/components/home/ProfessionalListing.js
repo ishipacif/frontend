@@ -74,11 +74,11 @@ class ProfessionalListing extends React.Component {
                 className={classes.inline}
                 color="textPrimary"
               >
-                <small>{"à " + professional.geoCoords + " km"}</small>
+                {/*<small>{"à professional.geoCoords +" + " km"}</small> */}
               </Typography>
               {" - " +
-                professional.services
-                  .map(proposal => proposal.serviceName)
+                professional.expertises
+                  .map(expertise => expertise.service.title)
                   .join(", ")}
             </React.Fragment>
           }

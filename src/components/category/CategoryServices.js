@@ -98,7 +98,7 @@ class CategoryServices extends React.Component {
         servicesByCategory["services"] = services;
         this.setState({
           servicesByCategory: servicesByCategory,
-          expanded: "service" + servicesByCategory.services[0].serviceId
+          expanded: "service" + servicesByCategory.services[0].id
         });
       }
     }
@@ -121,31 +121,34 @@ class CategoryServices extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <SiteHeader />
-        <main className={classes.layout}>
-          <Typography component="h1" variant="h5">
-            {servicesByCategory.categoryName}
-          </Typography>
-          <br />
-          <Typography>{servicesByCategory.categoryDescription}</Typography>
-          <br />
-          {servicesByCategory.services.map(service => (
-            <ExpansionPanel
-              square
-              expanded={expanded === "service" + service.serviceId}
-              onChange={this.handleChange("service" + service.serviceId)}
-            >
-              <ExpansionPanelSummary>
-                <Typography>{service.serviceName}</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <Typography>
-                  <br />
-                  {service.serviceDescription}
-                </Typography>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          ))}
-        </main>
+        {servicesByCategory.services.length > 0 ? (
+          <main className={classes.layout}>
+            <Typography component="h1" variant="h5">
+              {this.props.categoryId}
+            </Typography>
+            <br />
+            {servicesByCategory.services.map(service => (
+              <ExpansionPanel
+                square
+                expanded={expanded === "service" + service.id}
+                onChange={this.handleChange("service" + service.id)}
+              >
+                <ExpansionPanelSummary>
+                  <Typography>{service.title}</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Typography>
+                    <br />
+                    {service.description}
+                  </Typography>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ))}
+          </main>
+        ) : (
+          <React.Fragment>Aucun servive trouvé!</React.Fragment>
+        )}
+
         <SiteFooter footerLayoutStyle={classes.layout} />
       </React.Fragment>
     );

@@ -75,12 +75,12 @@ class OrderFrmProps {
       planningId === "0" || planningId === undefined
         ? await PersonasData.getProfessionals()
         : [await PlanningData.getProfessionalsByPlanning(planningId)];
-
+    // debugger;
     professionalPersonas.forEach(professionalPersona => {
-      serviceListCollapse['"' + professionalPersona.professionalId + '"'] = [];
-      professionalPersona.services.forEach(proposal => {
-        serviceListCollapse['"' + professionalPersona.professionalId + '"'][
-          '"' + proposal.serviceId + '"'
+      serviceListCollapse['"' + professionalPersona.id + '"'] = [];
+      professionalPersona.expertises.forEach(expertise => {
+        serviceListCollapse['"' + professionalPersona.id + '"'][
+          '"' + expertise.serviceId + '"'
         ] = planningId === "0" ? false : true;
       });
     });

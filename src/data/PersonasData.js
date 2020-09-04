@@ -2,7 +2,7 @@ import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PersonasData {
   getPersona(id) {
-    return wretch("http://homecleaners.azurewebsites.net/api/personas/" + id)
+    return wretch(process.env.REACT_APP_API_URL + "/personas/" + id)
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -15,7 +15,7 @@ class PersonasData {
   }
 
   getPersonas() {
-    return wretch("http://homecleaners.azurewebsites.net/api/personas")
+    return wretch(process.env.REACT_APP_API_URL + "/personas")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -27,32 +27,34 @@ class PersonasData {
       .json();
   }
 
-  getProfessionals() {
+  getProfessionalExpertises(id) {
     return wretch(
-      "http://homecleaners.azurewebsites.net/api/Professional/GetProfessionnals"
+      process.env.REACT_APP_API_URL + "/Professionals/" + id + "/expertises"
     )
       .get()
       .json();
   }
 
+  getProfessionals() {
+    return wretch(process.env.REACT_APP_API_URL + "/Professionals")
+      .get()
+      .json();
+  }
+
   getProfessionalsIds() {
-    return wretch("http://homecleaners.azurewebsites.net/api/professionals")
+    return wretch(process.env.REACT_APP_API_URL + "/professionals")
       .get()
       .json();
   }
 
   createUpdateCustomer(params) {
     if (params.id === undefined || params.id === "") {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/Account/CreateCustomer/"
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/Customers/")
         .json(params)
         .post()
         .res();
     } else {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/personas/" + params.id
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/Customers/" + params.id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -68,15 +70,13 @@ class PersonasData {
 
   createUpdateProfessional(params) {
     if (params.id === undefined || params.id === "") {
-      return wretch(
-        "http://homecleaners.azurewebsites.net/api/Account/CreateProfessional/"
-      )
+      return wretch(process.env.REACT_APP_API_URL + "/Professionals/")
         .json(params)
         .post()
         .res();
     } else {
       return wretch(
-        "http://homecleaners.azurewebsites.net/api/personas/" + params.id
+        process.env.REACT_APP_API_URL + "/Professionals/" + params.id
       )
         .headers({
           "access-token": auth_params.accessToken,
@@ -93,9 +93,7 @@ class PersonasData {
 
   createUpdatePersonaPermissions(params) {
     console.log(params);
-    return wretch(
-      "http://homecleaners.azurewebsites.net/api/permissions/set_access/"
-    )
+    return wretch(process.env.REACT_APP_API_URL + "/permissions/set_access/")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -109,7 +107,7 @@ class PersonasData {
   }
 
   authenticatePersona(params) {
-    return wretch("http://homecleaners.azurewebsites.net/api/personas/sign_in/")
+    return wretch(process.env.REACT_APP_API_URL + "/personas/sign_in/")
       .json(params)
       .post()
       .res()
@@ -117,7 +115,7 @@ class PersonasData {
   }
 
   disconnectPersona() {
-    return wretch("http://homecleaners.azurewebsites.net/api/personas/sign_out")
+    return wretch(process.env.REACT_APP_API_URL + "/personas/sign_out")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
@@ -130,7 +128,7 @@ class PersonasData {
   }
 
   isAuthenticated() {
-    return wretch("http://homecleaners.azurewebsites.net/api/personas/me")
+    return wretch(process.env.REACT_APP_API_URL + "/personas/me")
       .headers({
         "access-token": auth_params.accessToken,
         "token-type": auth_params.tokenType,
