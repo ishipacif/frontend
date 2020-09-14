@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import MuiExpansionPanel from "@material-ui/core/ExpansionPanel";
-import MuiExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import MuiExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
-
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import SiteHeader from "../../shared/SiteHeader";
@@ -17,58 +17,16 @@ import ServicesData from "../../data/ServicesData";
 const styles = theme => ({
   layout: {
     width: "auto",
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    marginTop: theme.spacing.unit * 4,
-    [theme.breakpoints.up(900 + theme.spacing.unit * 3 * 2)]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    marginTop: theme.spacing(4),
+    [theme.breakpoints.up(900 + theme.spacing(6))]: {
       width: 900,
       marginLeft: "auto",
       marginRight: "auto"
     }
   }
 });
-
-const ExpansionPanel = withStyles({
-  root: {
-    border: "1px solid rgba(0,0,0,.125)",
-    boxShadow: "none",
-    "&:not(:last-child)": {
-      borderBottom: 0
-    },
-    "&:before": {
-      display: "none"
-    }
-  },
-  expanded: {
-    margin: "auto"
-  }
-})(MuiExpansionPanel);
-
-const ExpansionPanelSummary = withStyles({
-  root: {
-    backgroundColor: "rgba(0,0,0,.03)",
-    borderBottom: "1px solid rgba(0,0,0,.125)",
-    marginBottom: -1,
-    minHeight: 56,
-    "&$expanded": {
-      minHeight: 56
-    }
-  },
-  content: {
-    "&$expanded": {
-      margin: "12px 0"
-    }
-  },
-  expanded: {}
-})(props => <MuiExpansionPanelSummary {...props} />);
-
-ExpansionPanelSummary.muiName = "ExpansionPanelSummary";
-
-const ExpansionPanelDetails = withStyles(theme => ({
-  root: {
-    padding: theme.spacing.unit * 2
-  }
-}))(MuiExpansionPanelDetails);
 
 class CategoryServices extends React.Component {
   constructor(props) {
@@ -94,6 +52,7 @@ class CategoryServices extends React.Component {
 
     if (servicesByCategory !== undefined) {
       const services = await ServicesData.getServicesByCategory(id);
+
       if (services !== undefined) {
         servicesByCategory["services"] = services;
         this.setState({
@@ -104,19 +63,13 @@ class CategoryServices extends React.Component {
     }
   }
 
-  handleChange = panel => (event, expanded) => {
-    this.setState({
-      expanded: expanded ? panel : false
-    });
-  };
-
   render() {
     const { classes } = this.props;
 
     if (this.state.servicesByCategory.length === 0) {
       return <LinearProgress />;
     }
-    const { expanded, servicesByCategory } = this.state;
+    const { servicesByCategory } = this.state;
     return (
       <React.Fragment>
         <CssBaseline />
@@ -128,21 +81,18 @@ class CategoryServices extends React.Component {
             </Typography>
             <br />
             {servicesByCategory.services.map(service => (
-              <ExpansionPanel
-                square
-                expanded={expanded === "service" + service.id}
-                onChange={this.handleChange("service" + service.id)}
-              >
-                <ExpansionPanelSummary>
-                  <Typography>{service.title}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Typography>
-                    <br />
-                    {service.description}
-                  </Typography>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+              <Accordion key={"service-id-" + service.id}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id={"service-id-" + service.id}
+                >
+                  <Typography variant="h6">{service.title}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>{service.description}</Typography>
+                </AccordionDetails>
+              </Accordion>
             ))}
           </main>
         ) : (

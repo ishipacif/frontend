@@ -29,14 +29,14 @@ class PersonasData {
 
   getProfessionalExpertises(id) {
     return wretch(
-      process.env.REACT_APP_API_URL + "/Professionals/" + id + "/expertises"
+      process.env.REACT_APP_API_URL + "Professionals/" + id + "/expertises"
     )
       .get()
       .json();
   }
 
   getProfessionals() {
-    return wretch(process.env.REACT_APP_API_URL + "/Professionals")
+    return wretch(process.env.REACT_APP_API_URL + "Professionals")
       .get()
       .json();
   }
@@ -45,6 +45,22 @@ class PersonasData {
     return wretch(process.env.REACT_APP_API_URL + "/professionals")
       .get()
       .json();
+  }
+
+  getAvailableProfessionals(params) {
+    return (
+      wretch(process.env.REACT_APP_API_URL + "Professionals/available")
+        // .headers({
+        //   "access-token": auth_params.accessToken,
+        //   "token-type": auth_params.tokenType,
+        //   client: auth_params.client,
+        //   expiry: auth_params.expiry,
+        //   uid: auth_params.uid
+        // })
+        .json(params)
+        .post()
+        .json()
+    );
   }
 
   createUpdateCustomer(params) {
@@ -107,10 +123,10 @@ class PersonasData {
   }
 
   authenticatePersona(params) {
-    return wretch(process.env.REACT_APP_API_URL + "/personas/sign_in/")
-      .json(params)
+    return wretch(process.env.REACT_APP_API_URL + "Auth/login/")
+      .formData(params)
       .post()
-      .res()
+      .json()
       .catch(error => error);
   }
 

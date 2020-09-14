@@ -10,8 +10,8 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
 import Divider from "@material-ui/core/Divider";
 import { Link } from "react-router-dom";
-import { Can } from "@casl/react";
-import { Ability } from "@casl/ability";
+// import { Can } from "@casl/react";
+// import { Ability } from "@casl/ability";
 
 class AdminNavigation extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class AdminNavigation extends Component {
   }
 
   render() {
-    const ability = new Ability(this.state.permissions);
+    // const ability = new Ability(this.state.permissions);
     return (
       <React.Fragment>
         <ListItem button component={Link} to="/admin">
@@ -32,30 +32,21 @@ class AdminNavigation extends Component {
           </ListItemIcon>
           <ListItemText primary="Acceuil Admin" />
         </ListItem>
-        {/*  <Can I="manage" a="Invoice" ability={ability}>
-          <ListItem button>
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Invoices" />
-          </ListItem>
-        </Can> */}
-        <Can I="manage" a="Service" ability={ability}>
-          <ListItem button component={Link} to="/admin/services">
-            <ListItemIcon>
-              <VerticalSplitIcon />
-            </ListItemIcon>
-            <ListItemText primary="Services & Categories" />
-          </ListItem>
-        </Can>
-        <Can I="manage" a="Persona" ability={ability}>
-          <ListItem button component={Link} to="/admin/personas">
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Personas" />
-          </ListItem>
-        </Can>
+
+        <ListItem button component={Link} to="/admin/services">
+          <ListItemIcon>
+            <VerticalSplitIcon />
+          </ListItemIcon>
+          <ListItemText primary="Services & Categories" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/admin/personas">
+          <ListItemIcon>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Personas" />
+        </ListItem>
+
         <Divider />
         <ListItem button component={Link} to="/">
           <ListItemIcon>
@@ -63,46 +54,38 @@ class AdminNavigation extends Component {
           </ListItemIcon>
           <ListItemText primary="Acceuil" />
         </ListItem>
-        {this.state.fixesPrices && (
-          <React.Fragment>
-            <Can I="manage" a="Planning" ability={ability}>
-              <ListItem button component={Link} to="/commandes">
-                <ListItemIcon>
-                  <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Les commandes" />
-              </ListItem>
-            </Can>
-            <Can I="manage" a="Proposal" ability={ability}>
-              <ListItem button>
-                <ListItemIcon>
-                  <VerticalSplitIcon />
-                </ListItemIcon>
-                <ListItemText primary="Mes services" />
-              </ListItem>
-            </Can>
-          </React.Fragment>
-        )}
-        {!this.state.fixesPrices && (
-          <React.Fragment>
-            <Can I="create" a="Planning" ability={ability}>
-              <ListItem button component={Link} to="/ajoutercommande/0">
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Nouvel commande" />
-              </ListItem>
-            </Can>
-            <Can I="manage" a="Planning" ability={ability}>
-              <ListItem m button component={Link} to="/commandes">
-                <ListItemIcon>
-                  <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Mes commandes" />
-              </ListItem>
-            </Can>
-          </React.Fragment>
-        )}
+
+        <React.Fragment>
+          <ListItem button component={Link} to="/commandes">
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Les commandes" />
+          </ListItem>
+
+          <ListItem button>
+            <ListItemIcon>
+              <VerticalSplitIcon />
+            </ListItemIcon>
+            <ListItemText primary="Mes services" />
+          </ListItem>
+        </React.Fragment>
+
+        <React.Fragment>
+          <ListItem button component={Link} to="/ajoutercommande/0">
+            <ListItemIcon>
+              <AddIcon />
+            </ListItemIcon>
+            <ListItemText primary="Nouvel commande" />
+          </ListItem>
+
+          <ListItem m button component={Link} to="/commandes">
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Mes commandes" />
+          </ListItem>
+        </React.Fragment>
       </React.Fragment>
     );
   }

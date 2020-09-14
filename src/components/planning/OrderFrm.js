@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Paper from "@material-ui/core/Paper";
-
+import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import ArrowForward from "@material-ui/icons/ArrowForward";
@@ -12,32 +13,36 @@ import ArrowForward from "@material-ui/icons/ArrowForward";
 import SiteHeader from "../../shared/SiteHeader";
 import SiteFooter from "../../shared/SiteFooter";
 
-import { Redirect } from "react-router";
-import { Formik, Form } from "formik";
+// import { Redirect } from "react-router";
 
-import OrderFrmProps from "../../shared/OrderFrmProps";
+import PersonasData from "../../data/PersonasData";
 import PlanningData from "../../data/PlanningData";
-import ProfessionalSelectionForm from "../signup/ProfessionalSelectionForm";
+import ServicesData from "../../data/ServicesData";
+// import ProfessionalSelectionForm from "../signup/ProfessionalSelectionForm";
+
+import { Formik, Form, Field } from "formik";
+import { TextField } from "formik-material-ui";
+import { Select, DateTimePicker } from "material-ui-formik-components";
 
 const styles = theme => ({
   layout: {
     width: "auto",
-    marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2,
-    [theme.breakpoints.up(700 + theme.spacing.unit * 2 * 2)]: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up(700 + theme.spacing(4))]: {
       width: 700,
       marginLeft: "auto",
       marginRight: "auto"
     }
   },
   paper: {
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit * 3,
-    padding: theme.spacing.unit * 2,
-    [theme.breakpoints.up(700 + theme.spacing.unit * 3 * 2)]: {
-      marginTop: theme.spacing.unit * 6,
-      marginBottom: theme.spacing.unit * 6,
-      padding: theme.spacing.unit * 3
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(2),
+    [theme.breakpoints.up(700 + theme.spacing(6))]: {
+      marginTop: theme.spacing(6),
+      marginBottom: theme.spacing(6),
+      padding: theme.spacing(3)
     }
   },
   buttons: {
@@ -48,153 +53,261 @@ const styles = theme => ({
 
 class OrderFrm extends React.Component {
   constructor(props) {
-    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
-
     super(props);
     this.state = {
-      categories: [],
       services: [],
-      proposalServices: [],
-      planningServices: [],
+      authParams: JSON.parse(localStorage.getItem("auth_params")),
       professionalPersonas: [],
-      serviceListCollapse: [],
+      bookingSuccess: false,
       snackBarOpen: false,
       snackBarContent: ""
     };
 
-    this.fillCategories();
-    this.fillServices(
-      auth_params.customerId,
-      this.props.match.params.planningId
-    );
-    this.fillProfessionals(this.props.match.params.planningId);
+    this.fillServices();
+    // this.fillProfessionals();
   }
 
-  async fillCategories() {
-    const categories = await OrderFrmProps.getCategories();
-    this.setState({
-      categories: categories
-    });
+  async fillServices() {
+    const serv = await ServicesData.getServices();
+    if (serv !== undefined) {
+      this.setState({
+        services: serv
+      });
+    }
   }
 
-  async fillServices(customerId, planningId) {
-    const serv = await OrderFrmProps.getServices(customerId, planningId);
-    const planning = await PlanningData.getPlanningById(planningId);
-    this.setState({
-      services: serv.services,
-      proposalServices: serv.proposalServices,
-      planningServices: planningId === "0" ? serv.planningServices : [planning]
-    });
+  async fillProfessionals() {
+    const prof = await PersonasData.getProfessionals();
+    if (prof !== undefined) {
+      this.setState({
+        professionalPersonas: prof
+      });
+    }
   }
 
-  async fillProfessionals(planningId) {
-    const prof = await OrderFrmProps.getProfessionals(planningId);
-    this.setState({
-      professionalPersonas: prof.professionalPersonas,
-      serviceListCollapse: prof.serviceListCollapse
-    });
+  async fetchProfessionals(serviceId, dateTime, duration) {
+    console.log(serviceId, dateTime, duration);
+    if (serviceId !== undefined && dateTime !== undefined) {
+      const prof = await PersonasData.getAvailableProfessionals({
+        serviceId: serviceId,
+        dateTime: dateTime,
+        duration: duration
+      });
+      if (prof !== undefined) {
+        this.setState({
+          professionalPersonas: prof
+        });
+      }
+    }
   }
 
   render() {
     const { classes } = this.props;
-    const {
-      categories,
-      services,
-      professionalPersonas,
-      serviceListCollapse
-    } = this.state;
+    const { services, professionalPersonas } = this.state;
 
-    if (this.state.snackBarOpen === true) {
-      return (
-        <Redirect
-          push
-          to={{
-            pathname: "/commandes",
-            state: {
-              snackBarOpen: true,
-              snackBarContent: this.state.snackBarContent
-            }
-          }}
-        />
-      );
-    }
+    // if (this.state.snackBarOpen === true) {
+    //   return (
+    //     <Redirect
+    //       push
+    //       to={{
+    //         pathname: "/commandes",
+    //         state: {
+    //           snackBarOpen: true,
+    //           snackBarContent: this.state.snackBarContent
+    //         }
+    //       }}
+    //     />
+    //   );
+    // }
 
-    if (
-      this.state.categories.length === 0 ||
-      this.state.services.length === 0 ||
-      this.state.professionalPersonas.length === 0 ||
-      this.state.serviceListCollapse === []
-    ) {
+    if (this.state.services.length === 0) {
       return <LinearProgress />;
     }
-
+    var todayDateTime = new Date(),
+      currentDateTime =
+        todayDateTime.getFullYear() +
+        "-" +
+        (todayDateTime.getMonth() + 1) +
+        "-" +
+        todayDateTime.getDate();
     return (
       <React.Fragment>
         <CssBaseline />
         <SiteHeader />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
-            <Formik
-              initialValues={{
-                customer_attributes: {
-                  plannings_attributes: this.state.planningServices
-                }
-              }}
-              validate={values => {}}
-              onSubmit={async (values, { setSubmitting }) => {
-                const planning = values.customer_attributes.plannings_attributes.filter(
-                  p =>
-                    p.start_hour !== null ||
-                    p.end_hour !== null ||
-                    p.date !== null
-                );
-                // console.log(planning);
-                const response = await PlanningData.createUpdatePlanning({
-                  planning: planning
-                });
-                if (response.status === 201 || response.status === 200) {
-                  this.setState({
-                    snackBarOpen: true,
-                    snackBarContent: "Commande sauvegardée avec succès"
-                  });
+            {this.state.bookingSuccess === true ? (
+              <Typography variant="h5" gutterBottom>
+                Information de connexion
+              </Typography>
+            ) : (
+              <Formik
+                initialValues={{
+                  categoryId: "",
+                  customerId: this.state.authParams.currentUser.person.id,
+                  expertiseForServiceCreate: {
+                    professionalId: "",
+                    serviceId: ""
+                  },
+                  startTime: currentDateTime,
+                  duration: 0
+                }}
+                onSubmit={async (values, { setSubmitting }) => {
+                  const response = await PlanningData.createUpdatePlanning(
+                    values
+                  );
+                  if (response.status === 201 || response.status === 200) {
+                    this.setState({
+                      snackBarOpen: true,
+                      snackBarContent: "Reservation faite avec succès",
+                      bookingSuccess: true
+                    });
+                    setSubmitting(false);
+                  } else {
+                    this.setState({
+                      snackBarOpen: true,
+                      snackBarContent: "Erreur de sauvegarde de la commande",
+                      bookingSuccess: false
+                    });
+                  }
                   setSubmitting(false);
-                } else {
-                  this.setState({
-                    snackBarOpen: true,
-                    snackBarContent: "Erreur de sauvegarde de la commande"
-                  });
-                }
-                setSubmitting(false);
-              }}
-              render={({ values, isSubmitting, submitForm, handleSubmit }) => (
-                <Form>
-                  <ProfessionalSelectionForm
-                    categories={categories}
-                    services={services}
-                    values={values}
-                    professionalPersonas={professionalPersonas}
-                    serviceListCollapse={serviceListCollapse}
-                  />
-                  <br />
-                  {isSubmitting && <LinearProgress />}
-                  <br />
-                  <div className={classes.buttons}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={submitForm}
-                      className={classes.button}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting
-                        ? "Enregistrement de votre commande... "
-                        : "Passer la commande "}
-                      <ArrowForward />
-                    </Button>
-                  </div>
-                </Form>
-              )}
-            />
+                }}
+                render={({
+                  values,
+                  isSubmitting,
+                  submitForm,
+                  handleSubmit,
+                  setFieldValue
+                }) => (
+                  <Form>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={12}>
+                        <Field
+                          label="Categories"
+                          id="categoryId"
+                          name="categoryId"
+                          required
+                          fullWidth
+                          value={values.categoryId}
+                          options={[
+                            { value: "Interieur", label: "Interieur" },
+                            { value: "Exterieur", label: "Exterieur" }
+                          ]}
+                          disabled={isSubmitting}
+                          component={Select}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={12}>
+                        <Field
+                          label="Services"
+                          id="expertiseForServiceCreate.serviceId"
+                          name="expertiseForServiceCreate.serviceId"
+                          required
+                          fullWidth
+                          value={values.expertiseForServiceCreate.serviceId}
+                          options={services
+                            .filter(
+                              service => service.category === values.categoryId
+                            )
+                            .map(service => ({
+                              value: service.id,
+                              label: service.title
+                            }))}
+                          disabled={isSubmitting}
+                          component={Select}
+                          onChange={e => {
+                            this.fetchProfessionals(
+                              e.target.value,
+                              values.startTime,
+                              values.duration
+                            );
+                            setFieldValue(
+                              "expertiseForServiceCreate.serviceId",
+                              e.target.value
+                            );
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={9}>
+                        <Field
+                          autoOk
+                          id="startTime"
+                          name="startTime"
+                          format="dd MMMM yyyy, hh:mm a"
+                          views={["year", "month", "date"]}
+                          value={values.startTime}
+                          disabled={isSubmitting}
+                          component={DateTimePicker}
+                          label="Date"
+                          required
+                          onChange={v => {
+                            this.fetchProfessionals(
+                              values.expertiseForServiceCreate.serviceId,
+                              v,
+                              values.duration
+                            );
+                            setFieldValue("startTime", v);
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={3}>
+                        <br />
+                        <Field
+                          id="duration"
+                          name="duration"
+                          value={values.duration}
+                          type="number"
+                          disabled={isSubmitting}
+                          label="Duration (hr)"
+                          component={TextField}
+                          required
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={12}>
+                        <Field
+                          label="Professionnel"
+                          id="expertiseForServiceCreate.professionalId"
+                          name="expertiseForServiceCreate.professionalId"
+                          required
+                          fullWidth
+                          value={
+                            values.expertiseForServiceCreate.professionalId
+                          }
+                          options={professionalPersonas.map(
+                            professionalPersona => ({
+                              value: professionalPersona.id,
+                              label:
+                                professionalPersona.firstName +
+                                " " +
+                                professionalPersona.lastName
+                            })
+                          )}
+                          disabled={isSubmitting}
+                          component={Select}
+                        />
+                      </Grid>
+                    </Grid>
+                    <br />
+                    {isSubmitting && <LinearProgress />}
+                    <br />
+                    <div className={classes.buttons}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={submitForm}
+                        className={classes.button}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting
+                          ? "Enregistrement de votre commande... "
+                          : "Passer la commande "}
+                        <ArrowForward />
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              />
+            )}
           </Paper>
         </main>
         <SiteFooter footerLayoutStyle={classes.layout} />

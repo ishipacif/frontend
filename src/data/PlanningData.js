@@ -115,8 +115,14 @@ class PlanningData {
   }
 
   createUpdatePlanning(params) {
-    if (params.planning[0].id === undefined || params.planning[0].id === "") {
-      return wretch(process.env.REACT_APP_API_URL + "/plannings")
+    if (params.id === undefined || params.id === "") {
+      return wretch(process.env.REACT_APP_API_URL + "Reservations")
+        .auth(`Bearer ${auth_params.accessToken}`)
+        .json(params)
+        .post()
+        .res();
+    } else {
+      return wretch(process.env.REACT_APP_API_URL + "Reservations" + params.id)
         .headers({
           "access-token": auth_params.accessToken,
           "token-type": auth_params.tokenType,
@@ -125,20 +131,6 @@ class PlanningData {
           uid: auth_params.uid
         })
         .json(params)
-        .post()
-        .res();
-    } else {
-      return wretch(
-        process.env.REACT_APP_API_URL + "/plannings/" + params.planning[0].id
-      )
-        .headers({
-          "access-token": auth_params.accessToken,
-          "token-type": auth_params.tokenType,
-          client: auth_params.client,
-          expiry: auth_params.expiry,
-          uid: auth_params.uid
-        })
-        .json(params.planning[0])
         .put()
         .res();
     }

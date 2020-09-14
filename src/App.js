@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./components/home/Home";
 import Login from "./components/login/Login";
@@ -20,78 +22,82 @@ import Admin from "./shared/Admin";
 class App extends Component {
   render() {
     return (
-      <Router>
-        <div className="App">
-          <Switch>
-            <Route exact path="/" render={props => <Home />} />
-            <Route path="/signup" render={props => <Signup {...props} />} />
-            <Route
-              path="/commandes"
-              render={props => <Commande {...props} />}
-            />
-            <Route
-              path="/category/:categoryId"
-              render={props => (
-                <CategoryServices categoryId={props.match.params.categoryId} />
-              )}
-            />
-            <Route path="/contact" render={props => <Contact />} />
-            <Route
-              path="/ajoutercommande/:planningId"
-              render={props => <OrderFrm {...props} />}
-            />
-            <Route path="/login" render={props => <Login {...props} />} />
-            <Route
-              exact
-              path="/admin"
-              render={props => (
-                <Admin {...props} bodyComponent={<Dashboard />} />
-              )}
-            />
-            <Route
-              path="/admin/personas"
-              render={props => <Admin bodyComponent={<Personas />} />}
-            />
-            <Route
-              path="/admin/personatypes/add"
-              render={props => (
-                <Admin bodyComponent={<TypesFrm {...props} />} />
-              )}
-            />
-            <Route
-              path="/admin/personatypes/edit/:personaTypeId"
-              render={props => (
-                <Admin bodyComponent={<TypesFrm {...props} />} />
-              )}
-            />
-            <Route
-              path="/admin/services"
-              render={props => <Admin bodyComponent={<Services />} />}
-            />
-            <Route
-              path="/admin/categories"
-              render={props => <Admin bodyComponent={<Categories />} />}
-            />
-            <Route
-              path="/admin/profile"
-              render={props => <Admin bodyComponent={<PersonaProfile />} />}
-            />
-            <Route
-              path="/admin/gestionpermissions/:personaId"
-              render={props => (
-                <Admin
-                  bodyComponent={
-                    <PersonaPermissions
-                      {...props}
-                      personaId={props.match.params.personaId}
-                    />
-                  }
-                />
-              )}
-            />
-          </Switch>
-        </div>
-      </Router>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Router>
+          <div className="App">
+            <Switch>
+              <Route exact path="/" render={props => <Home />} />
+              <Route path="/signup" render={props => <Signup {...props} />} />
+              <Route
+                path="/commandes"
+                render={props => <Commande {...props} />}
+              />
+              <Route
+                path="/category/:categoryId"
+                render={props => (
+                  <CategoryServices
+                    categoryId={props.match.params.categoryId}
+                  />
+                )}
+              />
+              <Route path="/contact" render={props => <Contact />} />
+              <Route
+                path="/ajoutercommande/:planningId"
+                render={props => <OrderFrm {...props} />}
+              />
+              <Route path="/login" render={props => <Login {...props} />} />
+              <Route
+                exact
+                path="/admin"
+                render={props => (
+                  <Admin {...props} bodyComponent={<Dashboard />} />
+                )}
+              />
+              <Route
+                path="/admin/personas"
+                render={props => <Admin bodyComponent={<Personas />} />}
+              />
+              <Route
+                path="/admin/personatypes/add"
+                render={props => (
+                  <Admin bodyComponent={<TypesFrm {...props} />} />
+                )}
+              />
+              <Route
+                path="/admin/personatypes/edit/:personaTypeId"
+                render={props => (
+                  <Admin bodyComponent={<TypesFrm {...props} />} />
+                )}
+              />
+              <Route
+                path="/admin/services"
+                render={props => <Admin bodyComponent={<Services />} />}
+              />
+              <Route
+                path="/admin/categories"
+                render={props => <Admin bodyComponent={<Categories />} />}
+              />
+              <Route
+                path="/admin/profile"
+                render={props => <Admin bodyComponent={<PersonaProfile />} />}
+              />
+              <Route
+                path="/admin/gestionpermissions/:personaId"
+                render={props => (
+                  <Admin
+                    bodyComponent={
+                      <PersonaPermissions
+                        {...props}
+                        personaId={props.match.params.personaId}
+                      />
+                    }
+                  />
+                )}
+              />
+            </Switch>
+          </div>
+        </Router>
+      </MuiPickersUtilsProvider>
     );
   }
 }

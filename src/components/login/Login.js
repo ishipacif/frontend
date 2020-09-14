@@ -23,32 +23,31 @@ const styles = theme => ({
   layout: {
     width: "auto",
     display: "block", // Fix IE 11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.up(400 + theme.spacing(3 * 2))]: {
       width: 400,
       marginLeft: "auto",
       marginRight: "auto"
     }
   },
   paper: {
-    marginTop: theme.spacing.unit * 8,
+    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`
   },
   avatar: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing.unit
+    marginTop: theme.spacing(1)
   },
   submit: {
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing(1)
   }
 });
 
@@ -105,27 +104,28 @@ class Login extends React.Component {
               Ouvrir une session
             </Typography>
             <Formik
-              initialValues={{ email: "", password: "" }}
+              initialValues={{ Username: "", Password: "" }}
               validate={values => {
                 const errors = {};
 
-                if (!values.email) errors.email = "Obligatoire";
+                if (!values.Username) errors.Username = "Obligatoire";
 
                 if (
                   !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                    values.email
+                    values.Username
                   )
                 ) {
-                  errors.email = "Vous devez fournir une adresse email valide";
+                  errors.Username =
+                    "Vous devez fournir une adresse email valide";
                 }
 
-                if (values.password.length < 8) {
-                  errors.password =
+                if (values.Password.length < 8) {
+                  errors.Password =
                     "Les mots de passe doivent comporter au moins 8 caractères.";
                 }
 
-                if (values.email === values.password) {
-                  errors.password =
+                if (values.Username === values.Password) {
+                  errors.Password =
                     "Votre mot de passe ne doit pas être semblable à votre email";
                 }
 
@@ -134,13 +134,10 @@ class Login extends React.Component {
               onSubmit={async (values, { setSubmitting }) => {
                 const response = await PersonasData.authenticatePersona(values);
 
-                if (response.status === 201 || response.status === 200) {
+                if (response !== undefined && response.token !== undefined) {
                   const auth_params = {
-                    accessToken: response.headers.get("access-token"),
-                    tokenType: response.headers.get("token-type"),
-                    client: response.headers.get("client"),
-                    expiry: response.headers.get("expiry"),
-                    uid: response.headers.get("uid"),
+                    accessToken: response.token,
+                    currentUser: response.user,
                     isAuthenticated: true
                   };
                   localStorage.setItem(
@@ -152,10 +149,11 @@ class Login extends React.Component {
                     toAdmin: true
                   });
                 } else {
-                  let response_txt = JSON.parse(response.text);
+                  // let response_txt = JSON.parse(response.text);
+                  // debugger;
                   this.setState({
                     snackBarOpen: true,
-                    snackBarContent: response_txt.errors.join(". ")
+                    snackBarContent: "Erreur de connexion"
                   });
                 }
                 setSubmitting(false);
@@ -164,9 +162,9 @@ class Login extends React.Component {
                 <Form>
                   <FormControl margin="normal" required fullWidth>
                     <Field
-                      id="email"
+                      id="Username"
                       required
-                      name="email"
+                      name="Username"
                       label="Courriel:"
                       autoFocus
                       component={TextField}
@@ -174,11 +172,11 @@ class Login extends React.Component {
                   </FormControl>
                   <FormControl margin="normal" required fullWidth>
                     <Field
-                      name="password"
+                      name="Password"
                       required
                       type="password"
                       label="Mot de passe"
-                      id="password"
+                      id="Password"
                       component={TextField}
                     />
                   </FormControl>

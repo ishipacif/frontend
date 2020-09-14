@@ -3,7 +3,7 @@ const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class ServicesData {
   // Services
   getServices() {
-    return wretch(process.env.REACT_APP_API_URL + "/services")
+    return wretch(process.env.REACT_APP_API_URL + "/Services")
       .get()
       .json();
   }

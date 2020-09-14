@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router";
 
 import AdminNavigation from "./AdminNav";
-import PersonasData from "../data/PersonasData";
+// import PersonasData from "../data/PersonasData";
 
 const drawerWidth = 250;
 
@@ -42,7 +42,7 @@ const styles = theme => ({
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     height: "100vh",
     overflow: "auto"
   },
@@ -86,9 +86,9 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 7,
+    width: theme.spacing(7),
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing.unit * 9
+      width: theme.spacing(9)
     }
   }
 });
@@ -106,10 +106,11 @@ class Admin extends React.Component {
         props.location.state.isAuthenticated !== undefined
           ? props.location.state.isAuthenticated
           : auth_params.isAuthenticated,
-      currentPersonaInfo: undefined,
-      fixesPrices: undefined
+      currentPersonaInfo:
+        auth_params && auth_params.isAuthenticated
+          ? auth_params.currentUser
+          : undefined
     };
-    this.checkAuthentication(auth_params);
   }
 
   handleDrawerOpen = () => {
@@ -129,59 +130,15 @@ class Admin extends React.Component {
   };
 
   async disconnectPersona() {
-    const response = await PersonasData.disconnectPersona();
+    // const response = await PersonasData.disconnectPersona();
 
-    if (response.success === true) {
-      localStorage.removeItem("auth_params");
-      this.setState({
-        currentPersonaInfo: undefined,
-        isAuthenticated: false,
-        fixesPrices: undefined
-      });
-    }
-  }
-
-  async checkAuthentication(auth_params) {
-    if (auth_params) {
-      const response = await PersonasData.isAuthenticated();
-
-      if (response.email === auth_params.uid) {
-        response.permissions = response.permissions.map(permission => ({
-          subject: permission.resource_class,
-          actions: permission.action
-        }));
-
-        this.setState({
-          currentPersonaInfo: response,
-          isAuthenticated: auth_params.isAuthenticated,
-          fixesPrices: response.type.fix_prices
-        });
-        auth_params.fixesPrices =
-          response.type.fix_prices === true ? true : false;
-
-        auth_params.permissions = response.permissions;
-
-        if (response.customer) {
-          auth_params.customerId = response.customer.id;
-        }
-        if (response.professional) {
-          auth_params.professionalId = response.professional.id;
-        }
-        localStorage.setItem("auth_params", JSON.stringify(auth_params));
-      } else {
-        this.setState({
-          currentPersonaInfo: undefined,
-          isAuthenticated: false,
-          fixesPrices: undefined
-        });
-      }
-    } else {
-      this.setState({
-        currentPersonaInfo: undefined,
-        isAuthenticated: false,
-        fixesPrices: undefined
-      });
-    }
+    // if (response.success === true) {
+    localStorage.removeItem("auth_params");
+    this.setState({
+      currentPersonaInfo: undefined,
+      isAuthenticated: false
+    });
+    // }
   }
 
   render() {
@@ -267,9 +224,9 @@ class Admin extends React.Component {
                     onClose={this.handleClose}
                   >
                     <MenuItem disabled>
-                      {this.state.currentPersonaInfo.first_name +
+                      {this.state.currentPersonaInfo.person.firstName +
                         " " +
-                        this.state.currentPersonaInfo.last_name}
+                        this.state.currentPersonaInfo.person.lastName}
                     </MenuItem>
                     <Divider />
                     <MenuItem
@@ -313,10 +270,7 @@ class Admin extends React.Component {
             <Divider />
             <List onClick={this.handleDrawerClose}>
               {this.state.currentPersonaInfo ? (
-                <AdminNavigation
-                  permissions={this.state.currentPersonaInfo.permissions}
-                  fixesPrices={this.state.fixesPrices}
-                />
+                <AdminNavigation />
               ) : (
                 <CircularProgress />
               )}
