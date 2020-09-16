@@ -54,8 +54,10 @@ class App extends Component {
                 )}
               />
               <Route
-                path="/admin/personas"
-                render={props => <Admin bodyComponent={<Personas />} />}
+                path="/admin/persona/:personaType"
+                render={props => (
+                  <Admin bodyComponent={<Personas {...props} />} />
+                )}
               />
               <Route
                 path="/admin/personatypes/add"

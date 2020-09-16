@@ -7,12 +7,12 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import MaterialTable from "material-table";
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { Formik, Field, Form } from "formik";
 import { TextField } from "formik-material-ui";
 import { Select } from "material-ui-formik-components";
-import SevicesToolbar from "../../../shared/SevicesToolbar";
 
 import ServicesData from "../../../data/ServicesData";
 
@@ -49,7 +49,7 @@ class Services extends React.Component {
     this.state = {
       serviceFrm: false,
       serviceId: "",
-      service: [],
+      service: undefined,
       services: []
     };
     this.loadUnloadFrm = this.loadUnloadFrm.bind(this);
@@ -58,23 +58,9 @@ class Services extends React.Component {
   }
 
   loadUnloadFrm = async event => {
-    let categories = [];
-    if (this.state.serviceFrm === false) {
-      const rawCategories = await ServicesData.getCategories();
-
-      rawCategories.forEach(function(category) {
-        categories.push({
-          value: category.id,
-          label: category.name
-        });
-      });
-    }
-    if (categories.length > 0) {
-      this.setState({
-        serviceFrm: !this.state.serviceFrm,
-        categories: categories
-      });
-    }
+    this.setState({
+      serviceFrm: !this.state.serviceFrm
+    });
   };
 
   async getServices() {
@@ -83,9 +69,9 @@ class Services extends React.Component {
     const services = rawServices.map(function(service) {
       return {
         id: service.id,
-        name: service.name,
-        commission: service.percentage_commission,
-        category: service.category.name
+        name: service.title,
+        description: service.description,
+        category: service.category
       };
     });
 
@@ -94,19 +80,21 @@ class Services extends React.Component {
     });
   }
 
-  resetFrmLoadList = event => {
+  resetFrmLoadList = () => {
     this.setState({
       serviceFrm: !this.state.serviceFrm,
       serviceId: "",
-      service: [],
+      service: undefined,
       services: []
     });
     this.getServices();
   };
 
   async deleteServiceById(id) {
-    await ServicesData.deleteService(id);
-    this.getServices();
+    const respo = await ServicesData.deleteService(id);
+    if (respo !== undefined) {
+      this.getServices();
+    }
   }
 
   async getServiceById(id) {
@@ -122,7 +110,7 @@ class Services extends React.Component {
 
     if (this.state.serviceFrm !== false) {
       if (this.state.serviceId !== "" && this.state.serviceId !== undefined) {
-        if (this.state.service.length === 0) {
+        if (this.state.service === undefined) {
           return <LinearProgress />;
         }
       }
@@ -131,14 +119,12 @@ class Services extends React.Component {
         <ServiceFrm
           classes={classes}
           service={this.state.service}
-          ServicesClass={this}
-          categories={this.state.categories}
+          resetFrmLoadList={this.resetFrmLoadList}
         />
       );
     } else {
       return (
         <div>
-          <SevicesToolbar />
           <div>
             <MaterialTable
               data={this.state.services}
@@ -149,9 +135,8 @@ class Services extends React.Component {
                   field: "name"
                 },
                 {
-                  title: "Commission (%)",
-                  field: "commission",
-                  type: "numeric"
+                  title: "Description",
+                  field: "description"
                 },
                 {
                   title: "Categorie",
@@ -190,14 +175,15 @@ class Services extends React.Component {
               }}
             />
           </div>
-          <Button
-            variant="fab"
+
+          <Fab
             className={classes.fab}
-            color="primary"
             onClick={this.loadUnloadFrm}
+            color="primary"
+            aria-label="add"
           >
             <AddIcon />
-          </Button>
+          </Fab>
         </div>
       );
     }
@@ -206,7 +192,7 @@ class Services extends React.Component {
 
 // Functional component for ServiceFrm
 const ServiceFrm = props => {
-  const { classes, service, categories, ServicesClass } = props;
+  const { classes, service, resetFrmLoadList } = props;
   return (
     <React.Fragment>
       <CssBaseline />
@@ -215,34 +201,35 @@ const ServiceFrm = props => {
           <Typography variant="h6">Service</Typography>
           <Formik
             initialValues={{
-              id: service.id,
-              name: service.name,
-              description: service.description,
-              percentage_commission: service.percentage_commission,
-              category_id: service.category_id
+              id: service === undefined ? 0 : service.id,
+              title: service === undefined ? "" : service.title,
+              description: service === undefined ? "" : service.description,
+              category: service === undefined ? "" : service.category
             }}
             validate={values => {
               let errors = {};
-              if (!values.name) {
-                errors.name = "Required";
+              if (!values.title) {
+                errors.title = "Required";
               }
               if (!values.description) {
                 errors.description = "Required";
               }
-              if (!values.percentage_commission) {
-                errors.percentage_commission = "Required";
-              }
-              if (!values.category_id) {
-                errors.category_id = "Required";
+
+              if (!values.category) {
+                errors.category = "Required";
               }
               return errors;
             }}
             onSubmit={async (values, { setSubmitting }) => {
               const response = await ServicesData.createUpdateService(values);
 
-              if (response.status === 201 || response.status === 200) {
+              if (
+                response.status === 201 ||
+                response.status === 200 ||
+                response.status === 204
+              ) {
                 setSubmitting(false);
-                ServicesClass.resetFrmLoadList();
+                resetFrmLoadList();
               }
             }}
             render={({ values, isSubmitting, submitForm, handleSubmit }) => (
@@ -250,11 +237,11 @@ const ServiceFrm = props => {
                 <FormControl margin="normal" required fullWidth>
                   <Field
                     required
-                    id="name"
-                    name="name"
+                    id="title"
+                    name="title"
                     label="Nom du service:"
                     autoFocus
-                    value={values.name}
+                    value={values.title}
                     component={TextField}
                   />
                 </FormControl>
@@ -273,23 +260,14 @@ const ServiceFrm = props => {
                 <FormControl margin="normal" required fullWidth>
                   <Field
                     required
-                    id="percentage_commission"
-                    name="percentage_commission"
-                    label="Pourcentage de la commission:"
-                    type="number"
-                    value={values.percentage_commission}
-                    component={TextField}
-                  />
-                </FormControl>
-
-                <FormControl margin="normal" required fullWidth>
-                  <Field
-                    required
-                    id="category_id"
-                    name="category_id"
+                    id="category"
+                    name="category"
                     label="Categorie:"
-                    value={values.category_id}
-                    options={categories}
+                    value={values.category}
+                    options={[
+                      { value: "Interieur", label: "Interieur" },
+                      { value: "Exterieur", label: "Exterieur" }
+                    ]}
                     component={Select}
                   />
                 </FormControl>
@@ -307,7 +285,9 @@ const ServiceFrm = props => {
                   </Button>{" "}
                   <Button
                     variant="contained"
-                    onClick={ServicesClass.resetFrmLoadList}
+                    onClick={() => {
+                      resetFrmLoadList();
+                    }}
                   >
                     Annuler
                   </Button>

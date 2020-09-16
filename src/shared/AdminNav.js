@@ -37,14 +37,21 @@ class AdminNavigation extends Component {
           <ListItemIcon>
             <VerticalSplitIcon />
           </ListItemIcon>
-          <ListItemText primary="Services & Categories" />
+          <ListItemText primary="Services" />
         </ListItem>
 
-        <ListItem button component={Link} to="/admin/personas">
+        <ListItem button component={Link} to="/admin/persona/customers">
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>
-          <ListItemText primary="Personas" />
+          <ListItemText primary="Clients" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/admin/persona/professionals">
+          <ListItemIcon>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Professionels" />
         </ListItem>
 
         <Divider />
