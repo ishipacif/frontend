@@ -32,6 +32,19 @@ class PersonasData {
       .json();
   }
 
+  setProfessionalExpertise(params) {
+    return wretch(
+      process.env.REACT_APP_API_URL +
+        "Professionals/" +
+        params.professionalId +
+        "/expertises"
+    )
+      .auth(`Bearer ${auth_params.accessToken}`)
+      .json(params)
+      .post()
+      .json();
+  }
+
   getProfessionals() {
     return wretch(process.env.REACT_APP_API_URL + "Professionals")
       .get()

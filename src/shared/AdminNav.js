@@ -70,7 +70,7 @@ class AdminNavigation extends Component {
             <ListItemText primary="Les commandes" />
           </ListItem>
 
-          <ListItem button>
+          <ListItem button component={Link} to="/expertises">
             <ListItemIcon>
               <VerticalSplitIcon />
             </ListItemIcon>

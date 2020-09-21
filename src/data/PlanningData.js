@@ -45,15 +45,11 @@ class PlanningData {
   }
 
   getStatus() {
-    return wretch(process.env.REACT_APP_API_URL + "/statuses")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
+    return wretch(process.env.REACT_APP_API_URL + "Reservations/search")
+      .auth(`Bearer ${auth_params.accessToken}`)
+      .post({
+        customerId: auth_params.currentUser.id
       })
-      .get()
       .json();
   }
 
@@ -102,15 +98,11 @@ class PlanningData {
   }
 
   deletePlanning(id) {
-    return wretch(process.env.REACT_APP_API_URL + "/plannings/" + id)
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .delete()
+    return wretch(
+      process.env.REACT_APP_API_URL + "Reservations/" + id + "/cancel"
+    )
+      .auth(`Bearer ${auth_params.accessToken}`)
+      .get()
       .res();
   }
 

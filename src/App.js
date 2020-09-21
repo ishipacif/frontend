@@ -14,6 +14,8 @@ import Personas from "./components/admin/personas/Personas";
 import TypesFrm from "./components/admin/personas/TypesFrm";
 import PersonaProfile from "./components/admin/personas/PersonaProfile";
 import PersonaPermissions from "./components/admin/personas/PersonaPermissions";
+import Expertises from "./components/admin/personas/Expertises";
+import ExpertiseFrm from "./components/admin/personas/ExpertiseFrm";
 import Services from "./components/admin/services/Services";
 import Categories from "./components/admin/categories/Categories";
 
@@ -28,6 +30,14 @@ class App extends Component {
             <Switch>
               <Route exact path="/" render={props => <Home />} />
               <Route path="/signup" render={props => <Signup {...props} />} />
+              <Route
+                path="/nouvelexpertise"
+                render={props => <ExpertiseFrm {...props} />}
+              />
+              <Route
+                path="/expertises"
+                render={props => <Expertises {...props} />}
+              />
               <Route
                 path="/commandes"
                 render={props => <Commande {...props} />}

@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 // import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
+
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 
@@ -12,15 +13,14 @@ import MaterialTable from "material-table";
 
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import Moment from "react-moment";
-import "moment-timezone";
-import "moment/locale/fr";
 
-import SiteHeader from "../../shared/SiteHeader";
-import SiteFooter from "../../shared/SiteFooter";
+import SiteHeader from "../../../shared/SiteHeader";
+import SiteFooter from "../../../shared/SiteFooter";
+import PersonasData from "../../../data/PersonasData";
 
-import PlanningData from "../../data/PlanningData";
-import OrderFrmProps from "../../shared/OrderFrmProps";
+// import PlanningData from "../../data/PlanningData";
+// import ServicesData from "../../data/ServicesData";
+// import OrderFrmProps from "../../shared/OrderFrmProps";
 
 const styles = theme => ({
   affected: {
@@ -54,13 +54,11 @@ const styles = theme => ({
   }
 });
 
-class Commande extends Component {
+class Expertises extends Component {
   constructor(props) {
     super(props);
     const auth_params = JSON.parse(localStorage.getItem("auth_params"));
-
     this.state = {
-      professionalList: [],
       statuses: [],
       isAuthenticated: auth_params ? auth_params.isAuthenticated : false,
 
@@ -78,80 +76,23 @@ class Commande extends Component {
           : ""
     };
 
-    this.getStatus();
+    this.fetchProfessionalExpertises(auth_params.currentUser.person.id);
   }
 
-  async deleteReservation(id) {
-    const rawStatus = await PlanningData.deletePlanning(id);
-    if (rawStatus !== undefined && rawStatus.status === 200) {
-      this.getStatus();
-    }
-    this.setState({
-      snackBarOpen: true,
-      snackBarContent: "Reservation annulée"
-    });
-  }
+  async fetchProfessionalExpertises(id) {
+    const expertises = await PersonasData.getProfessionalExpertises(id);
 
-  async getStatus() {
-    const professionalList = await OrderFrmProps.getProfessionals();
-    // const services = await ServicesData.getServices();
-    const rawStatus = await PlanningData.getStatus();
-    if (rawStatus !== undefined && professionalList !== undefined) {
-      const status = rawStatus.map(rawStat => {
-        const persona = professionalList.professionalPersonas.find(
-          prof => prof.id === rawStat.expertise.professionalId
-        );
-
+    if (expertises !== undefined) {
+      const status = expertises.map(rawStat => {
         return {
           id: rawStat.id,
-          date: (
-            <Moment format="DD/MMM/YYYY" locale="fr">
-              {rawStat.startTime}
-            </Moment>
-          ),
-          heures: (
-            <div>
-              <Moment format="HH:mm" locale="fr">
-                {rawStat.startTime}
-              </Moment>
-              {" -> "}
-              <Moment format="HH:mm" locale="fr">
-                {rawStat.endTime}
-              </Moment>
-            </div>
-          ),
-          persona: (
-            <div>
-              {persona.firstName + " " + persona.lastName}
-              <div>
-                <Typography
-                  color="textSecondary"
-                  variant="caption"
-                  component="i"
-                >
-                  {
-                    persona.expertises.find(
-                      exp => exp.serviceId === rawStat.expertise.serviceId
-                    ).service.title
-                  }
-                </Typography>
-              </div>
-            </div>
-          ),
-          billed:
-            rawStat.billingId !== undefined && rawStat.billingId !== null
-              ? true
-              : false,
-          status:
-            rawStat.billingId !== undefined && rawStat.billingId !== null
-              ? "Facturée"
-              : rawStat.status,
-          cancel: rawStat.status
+          name: rawStat.service.title,
+          category: rawStat.service.category,
+          prix: rawStat.hourlyRate
         };
       });
       this.setState({
-        statuses: status,
-        professionalList: professionalList.professionalPersonas
+        statuses: status
       });
     }
   }
@@ -189,7 +130,7 @@ class Commande extends Component {
                 color="textPrimary"
                 gutterBottom
               >
-                Mes commandes
+                Mes services
               </Typography>
               <Grid
                 container
@@ -201,12 +142,12 @@ class Commande extends Component {
                 <Grid item>
                   <Button
                     component={Link}
-                    to={"/ajoutercommande/0"}
+                    to={"/nouvelexpertise"}
                     variant="outlined"
                     size="large"
                     color="primary"
                   >
-                    Nouvelle commande
+                    Nouveau service
                   </Button>
                 </Grid>
               </Grid>
@@ -215,20 +156,16 @@ class Commande extends Component {
                 data={this.state.statuses}
                 columns={[
                   {
-                    title: "Date",
-                    field: "date"
+                    title: "Service",
+                    field: "name"
                   },
                   {
-                    title: "Heures",
-                    field: "heures"
+                    title: "Categorie",
+                    field: "category"
                   },
                   {
-                    title: "Professionel et service",
-                    field: "persona"
-                  },
-                  {
-                    title: "Status",
-                    field: "status"
+                    title: "Prix",
+                    field: "prix"
                   }
                 ]}
                 actions={[
@@ -237,11 +174,11 @@ class Commande extends Component {
                     tooltip: "Annuler",
                     onClick: (event, rowData) => {
                       if (rowData.billed) {
-                        alert(
-                          "Vous ne pouvez pas supprimer une résérvation facturée"
-                        );
+                        // alert(
+                        //   "Vous ne pouvez pas supprimer une résérvation facturée"
+                        // );
                       } else {
-                        this.deleteReservation(rowData.id);
+                        // this.deleteReservation(rowData.id);
                       }
                     }
                   }
@@ -275,8 +212,8 @@ class Commande extends Component {
   }
 }
 
-Commande.propTypes = {
+Expertises.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Commande);
+export default withStyles(styles)(Expertises);
