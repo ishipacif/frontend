@@ -124,12 +124,6 @@ class AdminNavigation extends Component {
               </ListItemIcon>
               <ListItemText primary="Mes commandes" />
             </ListItem>
-            <ListItem m button component={Link} to="/factures">
-              <ListItemIcon>
-                <ReceiptIcon />
-              </ListItemIcon>
-              <ListItemText primary="Mes factures" />
-            </ListItem>
             <Divider />
             <ListItem button component={Link} to="/">
               <ListItemIcon>

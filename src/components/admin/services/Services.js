@@ -201,7 +201,7 @@ const ServiceFrm = props => {
           <Typography variant="h6">Service</Typography>
           <Formik
             initialValues={{
-              id: service === undefined ? 0 : service.id,
+              id: service === undefined ? undefined : service.id,
               title: service === undefined ? "" : service.title,
               description: service === undefined ? "" : service.description,
               category: service === undefined ? "" : service.category

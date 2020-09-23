@@ -1,17 +1,14 @@
 import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PlanningData {
-  getProfessionalPlannings() {
-    return wretch(process.env.REACT_APP_API_URL + "/plannings/professional")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
+  getFactures(customerId) {
+    return wretch(
+      process.env.REACT_APP_API_URL + "Billing/" + customerId + "/createBill"
+    )
+      .auth(`Bearer ${auth_params.accessToken}`)
       .get()
-      .json();
+      .json()
+      .catch(error => error);
   }
 
   getProfessionalsByPlanning(planningId) {

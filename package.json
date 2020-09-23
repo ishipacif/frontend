@@ -18,6 +18,8 @@
     "@testing-library/user-event": "^7.1.2",
     "formik": "^2.1.4",
     "formik-material-ui": "^2.0.0-beta.1",
+    "jspdf": "^2.1.1",
+    "jspdf-autotable": "^3.5.13",
     "material-table": "^1.69.0",
     "material-ui-formik-components": "^0.7.1",
     "moment-timezone": "^0.5.31",
