@@ -13,11 +13,11 @@ import Moment from "react-moment";
 import "moment-timezone";
 import "moment/locale/fr";
 
-// import SiteHeader from "../../shared/SiteHeader";
-// import SiteFooter from "../../shared/SiteFooter";
-
 import PlanningData from "../../data/PlanningData";
 import PersonasData from "../../data/PersonasData";
+
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const styles = theme => ({
   affected: {
@@ -71,7 +71,8 @@ class Reservations extends Component {
         props.location.state !== undefined &&
         props.location.state.snackBarContent !== undefined
           ? props.location.state.snackBarContent
-          : ""
+          : "",
+      rawStatus: undefined
     };
 
     this.getStatus("professionalId");
@@ -86,6 +87,125 @@ class Reservations extends Component {
       snackBarOpen: true,
       snackBarContent: "Reservation annulée"
     });
+  }
+
+  makeInvoice(reservationId) {
+    const reservation = this.state.rawStatus.find(
+      reserv => reserv.id === reservationId
+    );
+    const professional = reservation.expertise.professional;
+
+    const customer = this.state.customersList.find(
+      cust => cust.id === reservation.customerId
+    );
+
+    const invoiceName =
+      professional.firstName +
+      "_" +
+      professional.lastName +
+      "_" +
+      reservation.startTime +
+      ".pdf";
+
+    const invoiceDoc = new jsPDF();
+    const pageSize = invoiceDoc.internal.pageSize;
+    const horizontalPos = pageSize.width / 2; //Page center position
+    const verticalPos = pageSize.height - 6; //Page number position
+
+    invoiceDoc.setFontSize(14);
+    invoiceDoc.text("FACTURE", horizontalPos, 22, {
+      align: "center"
+    });
+    invoiceDoc.setFontSize(12);
+    invoiceDoc.text(
+      professional.firstName + " " + professional.lastName,
+      25,
+      35
+    );
+    invoiceDoc.setFontSize(10);
+    invoiceDoc.text(professional.email, 25, 40);
+    invoiceDoc.text(professional.phoneNumber, 25, 45);
+
+    invoiceDoc.text("DATE: " + reservation.startTime.substring(0, 10), 160, 35);
+
+    invoiceDoc.text("Facturée à: ", 100, 55);
+    invoiceDoc.setFontSize(12);
+    invoiceDoc.text(customer.firstName + " " + customer.lastName, 100, 60);
+
+    invoiceDoc.setFontSize(10);
+    invoiceDoc.text(
+      customer.address.streetName + " " + customer.address.plotNumber,
+      100,
+      65
+    );
+    invoiceDoc.text(
+      customer.address.postalCode + " " + customer.address.city,
+      100,
+      70
+    );
+    invoiceDoc.text(customer.email, 100, 75);
+    invoiceDoc.text(customer.phoneNumber, 100, 80);
+
+    const headers = {
+      id: "No",
+      service: "Service",
+      hours: "Heude de début et de fin",
+      hourlyRate: "Prix par Heure",
+      totalCost: "Total"
+    };
+
+    const body = [
+      {
+        id: "1",
+        service: reservation.expertise.service.title,
+        hours:
+          reservation.startTime.substring(
+            reservation.startTime.length - 8,
+            reservation.startTime.length - 3
+          ) +
+          " - " +
+          reservation.endTime.substring(
+            reservation.startTime.length - 8,
+            reservation.startTime.length - 3
+          ),
+        hourlyRate: reservation.expertise.hourlyRate,
+        totalCost: reservation.totalCost
+      },
+      {
+        id: {
+          content: "TOTAL",
+          colSpan: 4,
+          styles: { fontStyle: "bold", halign: "center" }
+        },
+        totalCost: {
+          content: reservation.totalCost,
+          styles: { fontStyle: "bold", halign: "right" }
+        }
+      }
+    ];
+
+    invoiceDoc.autoTable({
+      head: [headers],
+      body: body,
+      startY: 100,
+      columnStyles: {
+        id: { halign: "center", cellWidth: 9 },
+        hours: { halign: "center", cellWidth: 45 },
+        hourlyRate: { halign: "right", cellWidth: 30 },
+        totalCost: { halign: "right", cellWidth: 25 }
+      }
+    });
+
+    const totalPages = invoiceDoc.internal.getNumberOfPages();
+
+    for (let j = 1; j < totalPages + 1; j++) {
+      invoiceDoc.setPage(j);
+      invoiceDoc.text(`${j} of ${totalPages}`, horizontalPos, verticalPos, {
+        align: "center"
+      });
+    }
+
+    return invoiceDoc.save(invoiceName);
   }
 
   async getStatus(personaType) {
@@ -141,7 +261,9 @@ class Reservations extends Component {
         };
       });
       this.setState({
-        statuses: status
+        statuses: status,
+        rawStatus: rawStatus,
+        customersList: customersList
       });
     }
   }
@@ -214,6 +336,19 @@ class Reservations extends Component {
                         );
                       } else {
                         this.deleteReservation(rowData.id);
+                      }
+                    }
+                  },
+                  {
+                    icon: "picture_as_pdf",
+                    tooltip: "Imprimer Facture",
+                    onClick: (event, rowData) => {
+                      if (rowData.billed) {
+                        this.makeInvoice(rowData.id);
+                      } else {
+                        alert(
+                          "Vous ne pouvez pas imprimer une facture pour une résérvation non facturée ou réjetée"
+                        );
                       }
                     }
                   }
