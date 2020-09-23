@@ -9,9 +9,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 
-import SiteHeader from "../../../shared/SiteHeader";
-import SiteFooter from "../../../shared/SiteFooter";
-
 import { Redirect } from "react-router";
 import PersonasData from "../../../data/PersonasData";
 import ServicesData from "../../../data/ServicesData";
@@ -74,21 +71,6 @@ class ExpertiseFrm extends React.Component {
     const { classes } = this.props;
     const { services } = this.state;
 
-    // if (this.state.snackBarOpen === true) {
-    //   return (
-    //     <Redirect
-    //       push
-    //       to={{
-    //         pathname: "/commandes",
-    //         state: {
-    //           snackBarOpen: true,
-    //           snackBarContent: this.state.snackBarContent
-    //         }
-    //       }}
-    //     />
-    //   );
-    // }
-
     if (this.state.services.length === 0) {
       return <LinearProgress />;
     }
@@ -96,7 +78,6 @@ class ExpertiseFrm extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             {this.state.serviceSuccess === true ? (
@@ -105,8 +86,8 @@ class ExpertiseFrm extends React.Component {
                 to={{
                   pathname: "/expertises",
                   state: {
-                    snackBarOpen: true,
-                    snackBarContent: "Service enregistré avec succès"
+                    snackBarOpen: this.state.snackBarOpen,
+                    snackBarContent: this.state.snackBarContent
                   }
                 }}
               />
@@ -123,19 +104,22 @@ class ExpertiseFrm extends React.Component {
                     values
                   );
 
-                  if (response.status === 201 || response.status === 200) {
+                  if (
+                    response.status === 201 ||
+                    response.status === 200 ||
+                    response.status === 204
+                  ) {
                     this.setState({
                       snackBarOpen: true,
                       snackBarContent: "Service enregistré avec succès",
                       serviceSuccess: true
                     });
-
                     setSubmitting(false);
                   } else {
                     this.setState({
                       snackBarOpen: true,
-                      snackBarContent: "Erreur de sauvegarde de service",
-                      serviceSuccess: false
+                      snackBarContent: response.text,
+                      serviceSuccess: true
                     });
                   }
                   setSubmitting(false);
@@ -223,7 +207,6 @@ class ExpertiseFrm extends React.Component {
             )}
           </Paper>
         </main>
-        <SiteFooter footerLayoutStyle={classes.layout} />
       </React.Fragment>
     );
   }

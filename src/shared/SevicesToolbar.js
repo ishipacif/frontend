@@ -28,14 +28,14 @@ class SevicesToolbar extends React.Component {
       <div className={classes.center}>
         <div>
           <Can I="manage" a="Service" ability={ability}>
-            <Button component={Link} to="/admin/services">
+            <Button component={Link} to="/monespace/services">
               <VerticalSplit />
               &nbsp;Services
             </Button>
           </Can>
           <Can I="manage" a="Category" ability={ability}>
             &nbsp;|&nbsp;
-            <Button component={Link} to="/admin/categories">
+            <Button component={Link} to="/monespace/categories">
               <Toc />
               &nbsp;Categories
             </Button>

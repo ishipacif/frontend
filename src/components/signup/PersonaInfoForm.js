@@ -49,27 +49,32 @@ class PersonaInfoForm extends React.Component {
 
   render() {
     const { values } = this.props;
+
     return (
       <React.Fragment>
         <Typography variant="h5" gutterBottom>
           Identification
         </Typography>
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={12}>
-            <Field
-              id="persona.accountType"
-              name="persona.accountType"
-              label="Type de compte"
-              autoFocus
-              required
-              fullWidth
-              options={[
-                { label: "Client", value: "customer" },
-                { label: "Professionnel", value: "professional" }
-              ]}
-              component={Select}
-            />
-          </Grid>
+          {values.persona.id === undefined && (
+            <Grid item xs={12} sm={12}>
+              <Field
+                id="persona.accountType"
+                name="persona.accountType"
+                label="Type de compte"
+                disabled={this.props.isSubmitting}
+                autoFocus
+                value={values.persona.accountType}
+                required
+                fullWidth
+                options={[
+                  { label: "Client", value: "customer" },
+                  { label: "Professionnel", value: "professional" }
+                ]}
+                component={Select}
+              />
+            </Grid>
+          )}
           <Grid item xs={12} sm={8}>
             <Grid item xs={12}>
               <Field
@@ -80,6 +85,7 @@ class PersonaInfoForm extends React.Component {
                 fullWidth
                 value={values.persona.firstName}
                 component={TextField}
+                disabled={this.props.isSubmitting}
               />
             </Grid>
             <Grid item xs={12}>
@@ -91,6 +97,7 @@ class PersonaInfoForm extends React.Component {
                 fullWidth
                 value={values.persona.lastName}
                 component={TextField}
+                disabled={this.props.isSubmitting}
               />
             </Grid>
           </Grid>
@@ -170,6 +177,7 @@ class PersonaInfoForm extends React.Component {
               fullWidth
               value={values.persona.address.streetName}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={3}>
@@ -181,6 +189,7 @@ class PersonaInfoForm extends React.Component {
               fullWidth
               value={values.persona.address.plotNumber}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} sm={8}>
@@ -192,6 +201,7 @@ class PersonaInfoForm extends React.Component {
               fullWidth
               value={values.persona.address.city}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -204,6 +214,7 @@ class PersonaInfoForm extends React.Component {
               type="number"
               value={values.persona.address.postalCode}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} sm={7}>
@@ -215,6 +226,7 @@ class PersonaInfoForm extends React.Component {
               fullWidth
               value={values.persona.email}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} sm={5}>
@@ -226,6 +238,7 @@ class PersonaInfoForm extends React.Component {
               fullWidth
               value={values.persona.phoneNumber}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -234,10 +247,11 @@ class PersonaInfoForm extends React.Component {
               name="password"
               label="Mot de passe"
               type="password"
-              required
+              required={values.persona.id === "" ? true : false}
               fullWidth
               value={""}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -246,10 +260,11 @@ class PersonaInfoForm extends React.Component {
               name="passwordComfirm"
               label="Confirmation de mot de passe"
               type="password"
-              required
+              required={values.persona.id === "" ? true : false}
               fullWidth
               value={""}
               component={TextField}
+              disabled={this.props.isSubmitting}
             />
           </Grid>
         </Grid>

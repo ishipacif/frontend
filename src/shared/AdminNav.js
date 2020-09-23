@@ -4,7 +4,7 @@ import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import VerticalSplitIcon from "@material-ui/icons/VerticalSplit";
 import PeopleIcon from "@material-ui/icons/People";
-// import BarChartIcon from "@material-ui/icons/BarChart";
+import ReceiptIcon from "@material-ui/icons/Receipt";
 import HomeIcon from "@material-ui/icons/Home";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
@@ -14,87 +14,153 @@ import { Link } from "react-router-dom";
 // import { Ability } from "@casl/ability";
 
 class AdminNavigation extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      permissions: props.permissions,
-      fixesPrices: props.fixesPrices
-    };
-  }
-
   render() {
-    // const ability = new Ability(this.state.permissions);
-    return (
-      <React.Fragment>
-        <ListItem button component={Link} to="/admin">
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Acceuil Admin" />
-        </ListItem>
+    const { currentPersonaInfo } = this.props;
+    let navMenu = <React.Fragment></React.Fragment>;
+    switch (currentPersonaInfo.roles[0]) {
+      case "Admin":
+        navMenu = (
+          <React.Fragment>
+            <ListItem button component={Link} to="/monespace">
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil Mon Espace" />
+            </ListItem>
 
-        <ListItem button component={Link} to="/admin/services">
-          <ListItemIcon>
-            <VerticalSplitIcon />
-          </ListItemIcon>
-          <ListItemText primary="Services" />
-        </ListItem>
+            <ListItem button component={Link} to="/monespace/services">
+              <ListItemIcon>
+                <VerticalSplitIcon />
+              </ListItemIcon>
+              <ListItemText primary="Services" />
+            </ListItem>
 
-        <ListItem button component={Link} to="/admin/persona/customers">
-          <ListItemIcon>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Clients" />
-        </ListItem>
+            <ListItem button component={Link} to="/monespace/persona/customers">
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Clients" />
+            </ListItem>
 
-        <ListItem button component={Link} to="/admin/persona/professionals">
-          <ListItemIcon>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Professionels" />
-        </ListItem>
+            <ListItem
+              button
+              component={Link}
+              to="/monespace/persona/professionals"
+            >
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Professionels" />
+            </ListItem>
 
-        <Divider />
-        <ListItem button component={Link} to="/">
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Acceuil" />
-        </ListItem>
+            <Divider />
+            <ListItem button component={Link} to="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil" />
+            </ListItem>
+          </React.Fragment>
+        );
+        break;
+      case "Professional":
+        navMenu = (
+          <React.Fragment>
+            <ListItem button component={Link} to="/monespace">
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil Mon Espace" />
+            </ListItem>
 
-        <React.Fragment>
-          <ListItem button component={Link} to="/commandes">
-            <ListItemIcon>
-              <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Les commandes" />
-          </ListItem>
+            <ListItem button component={Link} to="/expertises">
+              <ListItemIcon>
+                <VerticalSplitIcon />
+              </ListItemIcon>
+              <ListItemText primary="Mes services" />
+            </ListItem>
 
-          <ListItem button component={Link} to="/expertises">
-            <ListItemIcon>
-              <VerticalSplitIcon />
-            </ListItemIcon>
-            <ListItemText primary="Mes services" />
-          </ListItem>
-        </React.Fragment>
+            <ListItem button component={Link} to="/nouvelexpertise">
+              <ListItemIcon>
+                <AddIcon />
+              </ListItemIcon>
+              <ListItemText primary="Ajouter un service" />
+            </ListItem>
 
-        <React.Fragment>
-          <ListItem button component={Link} to="/ajoutercommande/0">
-            <ListItemIcon>
-              <AddIcon />
-            </ListItemIcon>
-            <ListItemText primary="Nouvel commande" />
-          </ListItem>
+            <ListItem button component={Link} to="/commandes">
+              <ListItemIcon>
+                <AssignmentIcon />
+              </ListItemIcon>
+              <ListItemText primary="Les commandes" />
+            </ListItem>
+            <Divider />
+            <ListItem button component={Link} to="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil" />
+            </ListItem>
+          </React.Fragment>
+        );
+        break;
+      case "Customer":
+        navMenu = (
+          <React.Fragment>
+            <ListItem button component={Link} to="/monespace">
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil Mon Espace" />
+            </ListItem>
+            <ListItem button component={Link} to="/ajoutercommande/0">
+              <ListItemIcon>
+                <AddIcon />
+              </ListItemIcon>
+              <ListItemText primary="Nouvel commande" />
+            </ListItem>
+            <ListItem m button component={Link} to="/commandes">
+              <ListItemIcon>
+                <AssignmentIcon />
+              </ListItemIcon>
+              <ListItemText primary="Mes commandes" />
+            </ListItem>
+            <ListItem m button component={Link} to="/factures">
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              <ListItemText primary="Mes factures" />
+            </ListItem>
+            <Divider />
+            <ListItem button component={Link} to="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil" />
+            </ListItem>
+          </React.Fragment>
+        );
+        break;
+      default:
+        navMenu = (
+          <React.Fragment>
+            <ListItem button component={Link} to="/monespace">
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil Mon Espace" />
+            </ListItem>
+            <Divider />
+            <ListItem button component={Link} to="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="Acceuil" />
+            </ListItem>
+          </React.Fragment>
+        );
+    }
 
-          <ListItem m button component={Link} to="/commandes">
-            <ListItemIcon>
-              <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Mes commandes" />
-          </ListItem>
-        </React.Fragment>
-      </React.Fragment>
-    );
+    return navMenu;
   }
 }
 

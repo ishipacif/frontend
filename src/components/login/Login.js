@@ -81,7 +81,7 @@ class Login extends React.Component {
         <Redirect
           push
           to={{
-            pathname: "/admin",
+            pathname: "/monespace",
             state: {
               isAuthenticated: true
             }
@@ -94,7 +94,7 @@ class Login extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+        <SiteHeader currentPersonaInfo={this.state.currentPersonaInfo} />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Avatar className={classes.avatar}>
@@ -207,7 +207,10 @@ class Login extends React.Component {
             message={<span id="message-id">{this.state.snackBarContent}</span>}
           />
         </main>
-        <SiteFooter footerLayoutStyle={classes.layout} />
+        <SiteFooter
+          currentPersonaInfo={this.state.currentPersonaInfo}
+          footerLayoutStyle={classes.layout}
+        />
       </React.Fragment>
     );
   }

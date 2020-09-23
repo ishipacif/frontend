@@ -1,10 +1,11 @@
 import wretch from "wretch";
 class ApiServices {
   sendEmail(params) {
-    return wretch(process.env.REACT_APP_API_URL + "/contact/send_mail")
+    return wretch(process.env.REACT_APP_API_URL + "Mails")
       .json(params)
       .post()
-      .json();
+      .json()
+      .catch(error => error);
   }
 }
 export default new ApiServices();

@@ -33,13 +33,21 @@ const styles = theme => ({
 });
 
 class Contact extends Component {
+  constructor(props) {
+    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
+    super(props);
+    this.state = {
+      currentPersonaInfo: auth_params || undefined
+    };
+  }
+
   render() {
     const classes = this.props.classes;
 
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+        <SiteHeader currentPersonaInfo={this.state.currentPersonaInfo} />
         <main className={classes.layout}>
           {/* Hero unit */}
           <div className={classes.heroContent}>
@@ -79,7 +87,7 @@ class Contact extends Component {
             </Grid>
           </Grid>
         </main>
-        <SiteFooter />
+        <SiteFooter currentPersonaInfo={this.state.currentPersonaInfo} />
       </React.Fragment>
     );
   }

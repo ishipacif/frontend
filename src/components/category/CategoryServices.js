@@ -30,10 +30,12 @@ const styles = theme => ({
 
 class CategoryServices extends React.Component {
   constructor(props) {
+    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
     super(props);
     this.state = {
       expanded: "service",
-      servicesByCategory: []
+      servicesByCategory: [],
+      currentPersonaInfo: auth_params || undefined
     };
     this.getServicesByCategory(props.categoryId);
   }
@@ -73,7 +75,7 @@ class CategoryServices extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+        <SiteHeader currentPersonaInfo={this.state.currentPersonaInfo} />
         {servicesByCategory.services.length > 0 ? (
           <main className={classes.layout}>
             <Typography component="h1" variant="h5">
@@ -99,7 +101,10 @@ class CategoryServices extends React.Component {
           <React.Fragment>Aucun servive trouvé!</React.Fragment>
         )}
 
-        <SiteFooter footerLayoutStyle={classes.layout} />
+        <SiteFooter
+          currentPersonaInfo={this.state.currentPersonaInfo}
+          footerLayoutStyle={classes.layout}
+        />
       </React.Fragment>
     );
   }

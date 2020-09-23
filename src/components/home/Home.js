@@ -36,9 +36,13 @@ const styles = theme => ({
 
 class Home extends Component {
   constructor(props) {
+    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
     super(props);
-    this.state = { tiers: [], open: false };
-    // this.get_tiers();
+    this.state = {
+      tiers: [],
+      open: false,
+      currentPersonaInfo: auth_params || undefined
+    };
   }
 
   handleToggle = () => {
@@ -53,32 +57,12 @@ class Home extends Component {
     this.setState({ open: false });
   };
 
-  // async get_tiers() {
-  //   const rawPersonaTypes = await PersonaTypes.getPersonaTypesForFront();
-  //
-  //   const personaTypes = rawPersonaTypes.map(function(personaType) {
-  //     return {
-  //       id: personaType.id,
-  //       title: personaType.name,
-  //       count: personaType.confirmed_personas.length,
-  //       description: [personaType.description],
-  //       buttonText: "Inscrivez-vous!",
-  //       buttonVariant: "contained"
-  //     };
-  //   });
-  //
-  //   this.setState({
-  //     tiers: personaTypes
-  //   });
-  // }
-
   render() {
     const classes = this.props.classes;
-
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+        <SiteHeader currentPersonaInfo={this.state.currentPersonaInfo} />
         <main className={classes.layout}>
           {/* Hero unit */}
           <div className={classes.heroContent}>
@@ -105,21 +89,22 @@ class Home extends Component {
               bénéficier des services proposés
             </Typography>
           </div>
-          {/* End hero unit */}
-          <Button
-            component={Link}
-            to={"/signup/"}
-            fullWidth
-            variant="contained"
-            color="primary"
-          >
-            Inscrivez-vous
-          </Button>
+          {this.state.currentPersonaInfo === undefined && (
+            <Button
+              component={Link}
+              to={"/signup/"}
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
+              Inscrivez-vous
+            </Button>
+          )}
           <br />
           <br />
           <ProfessionalListing />
         </main>
-        <SiteFooter />
+        <SiteFooter currentPersonaInfo={this.state.currentPersonaInfo} />
       </React.Fragment>
     );
   }

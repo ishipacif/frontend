@@ -1,15 +1,12 @@
 import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PersonasData {
-  getPersona(id) {
-    return wretch(process.env.REACT_APP_API_URL + "/personas/" + id)
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
+  getPersona(type, id) {
+    return wretch(
+      process.env.REACT_APP_API_URL +
+        (type === "customer" ? "Customers/" + id : "Professionals/" + id)
+    )
+      .auth(`Bearer ${auth_params.accessToken}`)
       .get()
       .json();
   }
@@ -42,7 +39,8 @@ class PersonasData {
       .auth(`Bearer ${auth_params.accessToken}`)
       .json(params)
       .post()
-      .json();
+      .json()
+      .catch(error => error);
   }
 
   getProfessionals() {
@@ -58,62 +56,49 @@ class PersonasData {
   }
 
   getAvailableProfessionals(params) {
-    return (
-      wretch(process.env.REACT_APP_API_URL + "Professionals/available")
-        // .headers({
-        //   "access-token": auth_params.accessToken,
-        //   "token-type": auth_params.tokenType,
-        //   client: auth_params.client,
-        //   expiry: auth_params.expiry,
-        //   uid: auth_params.uid
-        // })
-        .json(params)
-        .post()
-        .json()
-    );
+    return wretch(process.env.REACT_APP_API_URL + "Professionals/available")
+      .json(params)
+      .post()
+      .json();
   }
 
   createUpdateCustomer(params) {
-    if (params.id === undefined || params.id === "") {
-      return wretch(process.env.REACT_APP_API_URL + "/Customers/")
+    if (params.customer.id === undefined || params.customer.id === "") {
+      return wretch(process.env.REACT_APP_API_URL + "Customers/")
         .json(params)
         .post()
-        .res();
+        .res()
+        .catch(error => error);
     } else {
-      return wretch(process.env.REACT_APP_API_URL + "/Customers/" + params.id)
-        .headers({
-          "access-token": auth_params.accessToken,
-          "token-type": auth_params.tokenType,
-          client: auth_params.client,
-          expiry: auth_params.expiry,
-          uid: auth_params.uid
-        })
-        .json(params)
+      return wretch(
+        process.env.REACT_APP_API_URL + "Customers/" + params.customer.id
+      )
+        .auth(`Bearer ${auth_params.accessToken}`)
+        .json(params.customer)
         .put()
-        .res();
+        .res()
+        .catch(error => error);
     }
   }
 
   createUpdateProfessional(params) {
-    if (params.id === undefined || params.id === "") {
-      return wretch(process.env.REACT_APP_API_URL + "/Professionals/")
+    if (params.professional.id === undefined || params.professional.id === "") {
+      return wretch(process.env.REACT_APP_API_URL + "Professionals/")
         .json(params)
         .post()
-        .res();
+        .res()
+        .catch(error => error);
     } else {
       return wretch(
-        process.env.REACT_APP_API_URL + "/Professionals/" + params.id
+        process.env.REACT_APP_API_URL +
+          "Professionals/" +
+          params.professional.id
       )
-        .headers({
-          "access-token": auth_params.accessToken,
-          "token-type": auth_params.tokenType,
-          client: auth_params.client,
-          expiry: auth_params.expiry,
-          uid: auth_params.uid
-        })
-        .json(params)
+        .auth(`Bearer ${auth_params.accessToken}`)
+        .json(params.professional)
         .put()
-        .res();
+        .res()
+        .catch(error => error);
     }
   }
 

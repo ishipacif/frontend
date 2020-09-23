@@ -40,17 +40,6 @@ const footers = [
       { href: "/category/2", caption: "L'interieur" },
       { href: "/category/1", caption: "L'exterieur" }
     ]
-  },
-  {
-    title: "Commandes",
-    links: [{ href: "/commandes", caption: "Mon planning" }]
-  },
-  {
-    title: "Inscription",
-    links: [
-      { href: "/signup/1", caption: "Client" },
-      { href: "/signup/2", caption: "Prestataire" }
-    ]
   }
 ];
 

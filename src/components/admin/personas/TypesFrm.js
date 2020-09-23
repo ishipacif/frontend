@@ -90,7 +90,7 @@ class TypesFrm extends React.Component {
                 );
                 if (response.status === 201 || response.status === 200) {
                   setSubmitting(false);
-                  this.props.history.push("/admin/personas/");
+                  this.props.history.push("/monespace/personas/");
                   // return <Redirect to={"/admin/personas/"} />;
                 }
               }}

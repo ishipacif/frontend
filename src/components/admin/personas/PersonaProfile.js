@@ -34,45 +34,40 @@ const styles = theme => ({
 class PersonaProfile extends React.Component {
   constructor(props) {
     super(props);
+    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
     this.state = {
+      pictureToUpload: undefined,
       currentPersonaInfo: undefined,
-      toAdmin: false
+      toAdmin: false,
+      accountType: ""
     };
-    this.loadPersonaProfile();
+    this.loadPersonaProfile(auth_params);
   }
 
-  async loadPersonaProfile() {
-    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
-    const response = await PersonasData.isAuthenticated();
-    if (response.email === auth_params.uid) {
+  async loadPersonaProfile(params) {
+    const type =
+      params.currentUser.roles[0] === "Customer" ? "customer" : "professional";
+
+    const persona = await PersonasData.getPersona(
+      type,
+      params.currentUser.person.id
+    );
+    if (persona !== undefined) {
       this.setState({
-        currentPersonaInfo: response
+        currentPersonaInfo: persona,
+        accountType: type
       });
     }
   }
 
   changePic(url) {
     this.setState({
-      currentPersonaInfo: { picture: url }
+      pictureToUpload: url
     });
   }
 
   render() {
     const { classes } = this.props;
-
-    if (this.state.toAdmin === true) {
-      return (
-        <Redirect
-          push
-          to={{
-            pathname: "/admin",
-            state: {
-              isAuthenticated: true
-            }
-          }}
-        />
-      );
-    }
 
     if (this.state.currentPersonaInfo === undefined) {
       return <LinearProgress />;
@@ -80,58 +75,139 @@ class PersonaProfile extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <Formik
-            initialValues={{
-              id: this.state.currentPersonaInfo.id,
-              first_name: this.state.currentPersonaInfo.first_name,
-              last_name: this.state.currentPersonaInfo.last_name,
-              city_name: this.state.currentPersonaInfo.city_name,
-              email: this.state.currentPersonaInfo.email,
-              phone_number: this.state.currentPersonaInfo.phone_number,
-              plot_number: this.state.currentPersonaInfo.plot_number,
-              post_code: this.state.currentPersonaInfo.post_code,
-              street_name: this.state.currentPersonaInfo.street_name,
-              picture: this.state.currentPersonaInfo.picture
-            }}
-            validate={values => {}}
-            onSubmit={async (values, { setSubmitting }) => {
-              values.picture = this.state.currentPersonaInfo.picture;
-              const response = await PersonasData.createUpdatePersona(values);
-              if (response.status === 201 || response.status === 200) {
-                setSubmitting(false);
-                this.setState({
-                  toAdmin: true
-                });
-              } else {
-                console.error("err");
+        {this.state.toAdmin === true ? (
+          <Redirect
+            push
+            to={{
+              pathname: "/monespace",
+              state: {
+                snackBarOpen: true,
+                snackBarContent: "Votre profil est mis à jour avec succès"
               }
             }}
-            render={({ values, isSubmitting, submitForm, handleSubmit }) => (
-              <Form>
-                <PersonaInfoForm
-                  values={values}
-                  changePicFn={this.changePic.bind(this)}
-                />
-                <br />
-                {isSubmitting && <LinearProgress />}
-                <br />
-                <div className={classes.buttons}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={submitForm}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting
-                      ? "Mise à jour de votre profile... "
-                      : "Sauvegarder"}
-                  </Button>
-                </div>
-              </Form>
-            )}
           />
-        </Paper>
+        ) : (
+          <Paper className={classes.paper}>
+            <Formik
+              initialValues={{
+                persona: {
+                  accountType: this.state.accountType,
+                  id: this.state.currentPersonaInfo.id,
+                  userId: this.state.currentPersonaInfo.userId,
+                  firstName: this.state.currentPersonaInfo.firstName,
+                  lastName: this.state.currentPersonaInfo.lastName,
+                  addressId: this.state.currentPersonaInfo.addressId,
+                  email: this.state.currentPersonaInfo.email,
+                  phoneNumber: this.state.currentPersonaInfo.phoneNumber,
+                  picture: this.state.currentPersonaInfo.picture,
+                  address: {
+                    id: this.state.currentPersonaInfo.address.id,
+                    plotNumber: this.state.currentPersonaInfo.address
+                      .plotNumber,
+                    streetName: this.state.currentPersonaInfo.address
+                      .streetName,
+                    city: this.state.currentPersonaInfo.address.city,
+                    postalCode: this.state.currentPersonaInfo.address.postalCode
+                  }
+                },
+                password: "",
+                passwordComfirm: ""
+              }}
+              validate={values => {
+                let errors = {};
+                if (!values.persona.firstName) {
+                  errors.persona.firstName = "Obligatoire";
+                }
+                if (!values.persona.lastName) {
+                  errors.persona.lastName = "Obligatoire";
+                }
+                if (!values.persona.address.streetName) {
+                  errors.persona.address.streetName = "Obligatoire";
+                }
+                if (!values.persona.address.plotNumber) {
+                  errors.persona.address.plotNumber = "Obligatoire";
+                }
+                if (!values.persona.address.city) {
+                  errors.persona.address.city = "Obligatoire";
+                }
+                if (!values.persona.address.postalCode) {
+                  errors.persona.address.postalCode = "Obligatoire";
+                }
+
+                if (
+                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                    values.persona.email
+                  )
+                ) {
+                  errors.persona.email =
+                    "Vous devez fournir une adresse email valide";
+                }
+
+                return errors;
+              }}
+              onSubmit={async (values, { setSubmitting }) => {
+                let response = undefined;
+                if (this.state.pictureToUpload !== undefined) {
+                  values.persona.picture = this.state.pictureToUpload;
+                }
+
+                if (values.persona.accountType === "customer") {
+                  response = await PersonasData.createUpdateCustomer({
+                    customer: values.persona,
+                    password: values.password
+                  });
+                } else {
+                  // console.log(values);
+                  response = await PersonasData.createUpdateProfessional({
+                    professional: values.persona,
+                    password: values.password
+                  });
+                }
+                // console.log(response);
+
+                if (
+                  response.status === 201 ||
+                  response.status === 200 ||
+                  response.status === 204
+                ) {
+                  this.setState({
+                    toAdmin: true
+                  });
+                  setSubmitting(false);
+                  // this.props.history.push("/monespace/");
+                } else {
+                  this.setState({
+                    formStatus: "Erreur",
+                    reg_status: response.ok
+                  });
+                }
+              }}
+              render={({ values, isSubmitting, submitForm, handleSubmit }) => (
+                <Form>
+                  <PersonaInfoForm
+                    values={values}
+                    changePicFn={this.changePic.bind(this)}
+                  />
+                  <br />
+                  {isSubmitting && <LinearProgress />}
+                  <br />
+                  <div className={classes.buttons}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={submitForm}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting
+                        ? "Mise à jour de votre profile... "
+                        : "Sauvegarder"}
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            />
+          </Paper>
+        )}
       </div>
     );
   }

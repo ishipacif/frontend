@@ -3,27 +3,17 @@ import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
-// import Stepper from "@material-ui/core/Stepper";
-// import Step from "@material-ui/core/Step";
-// import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
+import Snackbar from "@material-ui/core/Snackbar";
 import Typography from "@material-ui/core/Typography";
-// import ArrowBack from "@material-ui/icons/ArrowBack";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { Formik, Form } from "formik";
 import SiteHeader from "../../shared/SiteHeader";
 import SiteFooter from "../../shared/SiteFooter";
 import PersonaInfoForm from "./PersonaInfoForm";
-// import LoginInfoForm from "./LoginInfoForm";
-// import ServiceSelectionForm from "./ServiceSelectionForm";
-// import ProfessionalSelectionForm from "./ProfessionalSelectionForm";
-// import ReviewSelectionForm from "./ReviewSelectionForm";
-// import ReviewProfessionalSelection from "./ReviewProfessionalSelection";
 
-import PersonaTypes from "../../data/PersonaTypes";
 import PersonasData from "../../data/PersonasData";
-import OrderFrmProps from "../../shared/OrderFrmProps";
 
 const styles = theme => ({
   layout: {
@@ -65,73 +55,27 @@ class Signup extends React.Component {
     this.state = {
       activeStep: 0,
       reg_status: "",
-      categories: [],
-      services: [],
-      proposalServices: [],
-      planningServices: [],
-      personaType: [],
-      professionalPersonas: [],
-      serviceListCollapse: [],
       pictureToUpload: undefined,
-      formStatus: "signUp"
+      formStatus: "signUp",
+      snackBarOpen: false,
+      snackBarMessage: ""
     };
-    // this.fillCategories();
-    // this.fillServices();
-    this.fillProfessionals();
-    // this.getPersonaType(props.match.params.personaTypeId);
   }
 
-  handleNext = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep + 1
-    }));
+  isErrorsEmpty = obj => {
+    for (let key in obj) {
+      //if the value is 'object'
+      if (obj[key] instanceof Object === true) {
+        if (this.isErrorsEmpty(obj[key]) === false) return false;
+      }
+      //if value is string/number
+      else {
+        //if array or string have length is not 0.
+        if (obj[key].length !== 0) return false;
+      }
+    }
+    return true;
   };
-
-  handleBack = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep - 1
-    }));
-  };
-
-  handleReset = () => {
-    this.setState({
-      activeStep: 0
-    });
-  };
-
-  async getPersonaType(id) {
-    const rawPersonaType = await PersonaTypes.getPersonaType(id);
-
-    this.setState({
-      personaType: rawPersonaType
-    });
-  }
-
-  async fillCategories() {
-    const categories = await OrderFrmProps.getCategories();
-
-    this.setState({
-      categories: categories
-    });
-  }
-
-  async fillServices() {
-    const serv = await OrderFrmProps.getServices();
-    this.setState({
-      services: serv.services,
-      proposalServices: serv.proposalServices,
-      planningServices: serv.planningServices
-    });
-  }
-
-  async fillProfessionals() {
-    const prof = await OrderFrmProps.getProfessionals();
-
-    this.setState({
-      professionalPersonas: prof.professionalPersonas,
-      serviceListCollapse: prof.serviceListCollapse
-    });
-  }
 
   changePic(url) {
     this.setState({
@@ -140,46 +84,18 @@ class Signup extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (
-      Number.parseInt(newProps.match.params.personaTypeId) !==
-      Number.parseInt(this.state.personaType.id)
-    ) {
-      this.setState({
-        activeStep: 0,
-        reg_status: "",
-        categories: [],
-        services: [],
-        proposalServices: [],
-        planningServices: [],
-        personaType: [],
-        professionalPersonas: [],
-        serviceListCollapse: [],
-        pictureToUpload: undefined
-      });
-      this.fillCategories();
-      this.fillServices();
-      this.fillProfessionals();
-      this.getPersonaType(newProps.match.params.personaTypeId);
-    }
+    this.setState({
+      pictureToUpload: undefined
+    });
   }
 
   render() {
     const { classes } = this.props;
 
-    if (
-      // this.state.categories.length === 0 ||
-      // this.state.services.length === 0 ||
-      // this.state.personaType.length === 0 ||
-      // this.state.professionalPersonas.length === 0 ||
-      this.state.serviceListCollapse === []
-    ) {
-      return <LinearProgress />;
-    }
-
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+        <SiteHeader currentPersonaInfo={this.state.currentPersonaInfo} />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h4" align="center">
@@ -190,48 +106,36 @@ class Signup extends React.Component {
               {
                 <React.Fragment>
                   <Formik
-                    initialValues={
-                      {
-                        persona: {
-                          accountType: "",
-                          firstName: "",
-                          lastName: "",
-                          email: "",
-                          phoneNumber: "",
-                          address: {
-                            streetName: "",
-                            plotNumber: "",
-                            city: "",
-                            postalCode: ""
-                          }
-                        },
-                        password: "",
-                        passwordComfirm: ""
-                      }
-
-                      /*  {
-                      accountType: "",
-                      firstName: "",
-                      lastName: "",
-                      city: "",
-                      email: "",
+                    initialValues={{
+                      persona: {
+                        accountType: "",
+                        firstName: "",
+                        lastName: "",
+                        email: "",
+                        phoneNumber: "",
+                        address: {
+                          streetName: "",
+                          plotNumber: "",
+                          city: "",
+                          postalCode: ""
+                        }
+                      },
                       password: "",
-                      passwordComfirm: "",
-                      phoneNumber: "",
-                      plotNumber: "",
-                      postCode: "",
-                      geoCoords: "",
-                      streetName: "",
-                      picture: null
-                    } */
-                    }
+                      passwordComfirm: ""
+                    }}
                     validate={values => {
-                      let errors = {};
+                      let errors = { persona: { address: {} } };
+                      if (!values.persona.accountType) {
+                        errors.persona.accountType = "Obligatoire";
+                      }
                       if (!values.persona.firstName) {
                         errors.persona.firstName = "Obligatoire";
                       }
                       if (!values.persona.lastName) {
                         errors.persona.lastName = "Obligatoire";
+                      }
+                      if (!values.persona.phoneNumber) {
+                        errors.persona.phoneNumber = "Obligatoire";
                       }
                       if (!values.persona.address.streetName) {
                         errors.persona.address.streetName = "Obligatoire";
@@ -266,12 +170,17 @@ class Signup extends React.Component {
                         errors.password =
                           "Votre mot de passe ne doit pas être le même que votre email";
                       }
-                      return errors;
+                      if (values.passwordComfirm !== values.password) {
+                        errors.passwordComfirm =
+                          "Les deux mots de passe doivent être identique";
+                      }
+
+                      return this.isErrorsEmpty(errors) === true ? {} : errors;
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
                       let response = undefined;
                       values.persona.picture = this.state.pictureToUpload;
-                      console.log(values);
+                      // console.log(values);
                       // debugger;
                       if (values.persona.accountType === "customer") {
                         response = await PersonasData.createUpdateCustomer({
@@ -284,23 +193,35 @@ class Signup extends React.Component {
                           password: values.password
                         });
                       }
-                      console.log(response);
-                      if (response.status === 201 || response.status === 200) {
+                      // console.log(response);
+                      if (
+                        response.status === 201 ||
+                        response.status === 200 ||
+                        response.status === 204
+                      ) {
                         this.setState({
                           formStatus: "Succès",
                           reg_status: response.ok
                         });
                         setSubmitting(false);
-                        this.handleNext();
+                      } else if (response.status === 400) {
+                        this.setState({
+                          snackBarOpen: true,
+                          snackBarMessage: response.text
+                        });
+                        setSubmitting(false);
                       } else {
                         this.setState({
                           formStatus: "Erreur",
-                          reg_status: response.ok
+                          reg_status: response.ok,
+                          snackBarOpen: true,
+                          snackBarMessage: response.text
                         });
                       }
                     }}
                     render={({
                       values,
+                      errors,
                       isSubmitting,
                       submitForm,
                       handleSubmit
@@ -309,6 +230,7 @@ class Signup extends React.Component {
                         <Form>
                           <PersonaInfoForm
                             values={values}
+                            isSubmitting={isSubmitting}
                             changePicFn={this.changePic.bind(this)}
                           />
                           <br />
@@ -340,8 +262,17 @@ class Signup extends React.Component {
               }
             </React.Fragment>
           </Paper>
+          <Snackbar
+            open={this.state.snackBarOpen}
+            autoHideDuration={4000}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            message={this.state.snackBarMessage}
+          />
         </main>
-        <SiteFooter footerLayoutStyle={classes.layout} />
+        <SiteFooter
+          currentPersonaInfo={this.state.currentPersonaInfo}
+          footerLayoutStyle={classes.layout}
+        />
       </React.Fragment>
     );
   }

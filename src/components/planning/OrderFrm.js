@@ -9,9 +9,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 
-import SiteHeader from "../../shared/SiteHeader";
-import SiteFooter from "../../shared/SiteFooter";
-
 import { Redirect } from "react-router";
 
 import PersonasData from "../../data/PersonasData";
@@ -132,7 +129,6 @@ class OrderFrm extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             {this.state.bookingSuccess === true ? (
@@ -162,7 +158,11 @@ class OrderFrm extends React.Component {
                   const response = await PlanningData.createUpdatePlanning(
                     values
                   );
-                  if (response.status === 201 || response.status === 200) {
+                  if (
+                    response.status === 201 ||
+                    response.status === 200 ||
+                    response.status === 204
+                  ) {
                     this.setState({
                       snackBarOpen: true,
                       snackBarContent: "Reservation faite avec succès",
@@ -173,7 +173,7 @@ class OrderFrm extends React.Component {
                   } else {
                     this.setState({
                       snackBarOpen: true,
-                      snackBarContent: "Erreur de sauvegarde de la commande",
+                      snackBarContent: response.text,
                       bookingSuccess: false
                     });
                   }
@@ -317,7 +317,6 @@ class OrderFrm extends React.Component {
             )}
           </Paper>
         </main>
-        <SiteFooter footerLayoutStyle={classes.layout} />
       </React.Fragment>
     );
   }

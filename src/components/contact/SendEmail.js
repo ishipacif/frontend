@@ -50,43 +50,55 @@ class SendEmail extends Component {
           <br />
           <Formik
             initialValues={{
-              full_name: "",
-              email: "",
+              fullName: "",
+              to: "ishipacif@gmail.com",
+              ReplyTo: "",
               subject: "",
-              message: ""
+              body: ""
             }}
             validate={values => {
               let errors = {};
-              if (!values.full_name) {
-                errors.full_name = "Obligatoire";
+              if (!values.fullName) {
+                errors.fullName = "Obligatoire";
               }
               if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                  values.ReplyTo
+                )
               ) {
-                errors.email = "Vous devez fournir une adresse email valide";
+                errors.ReplyTo = "Vous devez fournir une adresse email valide";
               }
               if (!values.subject) {
                 errors.subject = "Obligatoire";
               }
-              if (!values.message) {
-                errors.message = "Obligatoire";
+              if (!values.body) {
+                errors.body = "Obligatoire";
               }
 
               return errors;
             }}
             onSubmit={async (values, { setSubmitting }) => {
+              values.ReplyTo = values.fullName + "<" + values.ReplyTo + ">";
+
               const response = await ApiServices.sendEmail(values);
 
-              if (response.status === "success") {
-                values.full_name = "";
-                values.email = "";
+              if (
+                response.status === 200 ||
+                response.status === 201 ||
+                response.status === 204
+              ) {
+                values.fullName = "";
                 values.subject = "";
-                values.message = "";
+                values.body = "";
               }
+              this.setState({
+                snackBarOpen: true,
+                snackBarContent: "Courriel envoyé avec succès"
+              });
               setSubmitting(false);
               this.setState({
                 snackBarOpen: true,
-                snackBarContent: response.message
+                snackBarContent: response.text
               });
             }}
             render={({ values, isSubmitting, submitForm, handleSubmit }) => (
@@ -98,24 +110,26 @@ class SendEmail extends Component {
 
                   <FormControl margin="normal" required fullWidth>
                     <Field
-                      id="full_name"
-                      name="full_name"
+                      id="fullName"
+                      name="fullName"
                       label="Votre nom et prénom"
                       required
                       fullWidth
-                      value={values.full_name}
+                      value={values.fullName}
                       component={TextField}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormControl margin="normal" required fullWidth>
                     <Field
-                      id="email"
-                      name="email"
+                      id="ReplyTo"
+                      name="ReplyTo"
                       label="Votre e-mail"
                       required
                       fullWidth
-                      value={values.email}
+                      value={values.ReplyTo}
                       component={TextField}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
 
@@ -128,18 +142,20 @@ class SendEmail extends Component {
                       fullWidth
                       value={values.subject}
                       component={TextField}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormControl margin="normal" required fullWidth>
                     <Field
-                      id="message"
-                      name="message"
+                      id="body"
+                      name="body"
                       label="Votre message"
                       rows="5"
                       required
                       multiline
-                      value={values.message}
+                      value={values.body}
                       component={TextField}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                 </CardContent>

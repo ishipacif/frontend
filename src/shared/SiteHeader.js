@@ -30,11 +30,9 @@ const styles = theme => ({
 class SiteHeader extends Component {
   constructor(props) {
     super(props);
-    const auth_params = JSON.parse(localStorage.getItem("auth_params"));
+
     this.state = {
-      open: false,
-      isAuthenticated: auth_params ? auth_params.isAuthenticated : false,
-      fixesPrices: auth_params ? auth_params.fixesPrices : undefined
+      open: false
     };
   }
 
@@ -117,15 +115,20 @@ class SiteHeader extends Component {
                         >
                           L'exterieur
                         </MenuItem>
-                        {this.state.isAuthenticated && (
-                          <MenuItem
-                            component={Link}
-                            to="/commandes"
-                            onClick={this.handleClose}
-                          >
-                            Commandes
-                          </MenuItem>
-                        )}
+                        {this.props.currentPersonaInfo !== undefined &&
+                          this.props.currentPersonaInfo.currentUser !==
+                            undefined &&
+                          this.props.currentPersonaInfo.isAuthenticated &&
+                          this.props.currentPersonaInfo.currentUser.roles[0] ===
+                            "Customer" && (
+                            <MenuItem
+                              component={Link}
+                              to="/commandes"
+                              onClick={this.handleClose}
+                            >
+                              Commandes
+                            </MenuItem>
+                          )}
                         <MenuItem
                           component={Link}
                           to="/contact"
@@ -138,11 +141,9 @@ class SiteHeader extends Component {
                           to="/login"
                           onClick={this.handleClose}
                         >
-                          {this.state.isAuthenticated
-                            ? "Espace " +
-                              (this.state.fixesPrices
-                                ? "Prestataire"
-                                : "Client")
+                          {this.props.currentPersonaInfo !== undefined &&
+                          this.props.currentPersonaInfo.isAuthenticated
+                            ? "Mon Espace"
                             : "Se connecter"}
                         </MenuItem>
                       </MenuList>
@@ -163,11 +164,15 @@ class SiteHeader extends Component {
             <Button component={Link} to="/category/Exterieur">
               L'exterieur
             </Button>
-            {this.state.isAuthenticated && (
-              <Button component={Link} to="/commandes">
-                Commandes
-              </Button>
-            )}
+            {this.props.currentPersonaInfo !== undefined &&
+              this.props.currentPersonaInfo.currentUser !== undefined &&
+              this.props.currentPersonaInfo.isAuthenticated &&
+              this.props.currentPersonaInfo.currentUser.roles[0] ===
+                "Customer" && (
+                <Button component={Link} to="/commandes">
+                  Commandes
+                </Button>
+              )}
             <Button component={Link} to="/contact">
               Nous Contacter
             </Button>
@@ -177,9 +182,9 @@ class SiteHeader extends Component {
               component={Link}
               to="/login"
             >
-              {this.state.isAuthenticated
-                ? "Espace " +
-                  (this.state.fixesPrices ? "Prestataire" : "Client")
+              {this.props.currentPersonaInfo !== undefined &&
+              this.props.currentPersonaInfo.isAuthenticated
+                ? "Mon espace"
                 : "Se connecter"}
             </Button>
           </MediaQuery>

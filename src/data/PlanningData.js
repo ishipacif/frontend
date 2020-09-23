@@ -112,19 +112,15 @@ class PlanningData {
         .auth(`Bearer ${auth_params.accessToken}`)
         .json(params)
         .post()
-        .res();
+        .res()
+        .catch(error => error);
     } else {
       return wretch(process.env.REACT_APP_API_URL + "Reservations" + params.id)
-        .headers({
-          "access-token": auth_params.accessToken,
-          "token-type": auth_params.tokenType,
-          client: auth_params.client,
-          expiry: auth_params.expiry,
-          uid: auth_params.uid
-        })
+        .auth(`Bearer ${auth_params.accessToken}`)
         .json(params)
         .put()
-        .res();
+        .res()
+        .catch(error => error);
     }
   }
 }

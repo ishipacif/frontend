@@ -1,10 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import SwipeableViews from "react-swipeable-views";
-import Grid from "@material-ui/core/Grid";
-import { Link } from "react-router-dom";
 import { autoPlay } from "react-swipeable-views-utils";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
@@ -34,27 +31,6 @@ const tutorialSteps = [
     label: "Goč, Serbia",
     imgPath:
       "https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60"
-  }
-];
-
-const footers = [
-  {
-    title: "House Cleaning",
-    links: [
-      { href: "/", caption: "Home" },
-      { href: "/contact/", caption: "Nous contacter" }
-    ]
-  },
-  {
-    title: "Services",
-    links: [
-      { href: "/category/1", caption: "L'interieur" },
-      { href: "/category/2", caption: "L'exterieur" }
-    ]
-  },
-  {
-    title: "Commandes",
-    links: [{ href: "/commandes", caption: "Mon planning" }]
   }
 ];
 
@@ -124,28 +100,6 @@ class Dashboard extends React.Component {
               </div>
             ))}
           </AutoPlaySwipeableViews>
-          <br />
-          <br />
-          <Grid container spacing={32} justify="space-evenly">
-            {footers.map(footer => (
-              <Grid item xs key={footer.title}>
-                <Typography variant="h6" color="textPrimary" gutterBottom>
-                  {footer.title}
-                </Typography>
-                {footer.links.map((link, i) => (
-                  <Typography
-                    component={Link}
-                    key={i}
-                    variant="subtitle1"
-                    color="textSecondary"
-                    to={link.href}
-                  >
-                    {link.caption}
-                  </Typography>
-                ))}
-              </Grid>
-            ))}
-          </Grid>
         </center>
       </div>
     );

@@ -16,8 +16,8 @@ import Moment from "react-moment";
 import "moment-timezone";
 import "moment/locale/fr";
 
-import SiteHeader from "../../shared/SiteHeader";
-import SiteFooter from "../../shared/SiteFooter";
+// import SiteHeader from "../../shared/SiteHeader";
+// import SiteFooter from "../../shared/SiteFooter";
 
 import PlanningData from "../../data/PlanningData";
 import OrderFrmProps from "../../shared/OrderFrmProps";
@@ -178,7 +178,7 @@ class Commande extends Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
+
         <main className={classes.layout}>
           <div className={classes.heroContent}>
             <React.Fragment>
@@ -269,7 +269,6 @@ class Commande extends Component {
             />
           }
         </main>
-        <SiteFooter />
       </React.Fragment>
     );
   }

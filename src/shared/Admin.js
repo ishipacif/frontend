@@ -10,6 +10,7 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -109,7 +110,19 @@ class Admin extends React.Component {
       currentPersonaInfo:
         auth_params && auth_params.isAuthenticated
           ? auth_params.currentUser
-          : undefined
+          : undefined,
+      snackBarOpen:
+        props.location !== undefined &&
+        props.location.state !== undefined &&
+        props.location.state.snackBarOpen !== undefined
+          ? props.location.state.snackBarOpen
+          : false,
+      snackBarContent:
+        props.location !== undefined &&
+        props.location.state !== undefined &&
+        props.location.state.snackBarContent !== undefined
+          ? props.location.state.snackBarContent
+          : ""
     };
   }
 
@@ -144,8 +157,8 @@ class Admin extends React.Component {
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
-
     const open = Boolean(anchorEl);
+
     if (
       this.state.isAuthenticated === false &&
       this.state.currentPersonaInfo === undefined &&
@@ -229,16 +242,19 @@ class Admin extends React.Component {
                         this.state.currentPersonaInfo.person.lastName}
                     </MenuItem>
                     <Divider />
-                    <MenuItem
-                      onClick={event => {
-                        this.handleClose();
-                      }}
-                      button
-                      component={Link}
-                      to="/admin/profile"
-                    >
-                      Mon Profil
-                    </MenuItem>
+                    {this.state.currentPersonaInfo.roles[0] !== "Admin" && (
+                      <MenuItem
+                        onClick={event => {
+                          this.handleClose();
+                        }}
+                        button
+                        component={Link}
+                        to="/monespace/profile"
+                      >
+                        Mon Profil
+                      </MenuItem>
+                    )}
+
                     <MenuItem
                       onClick={event => {
                         this.disconnectPersona();
@@ -270,7 +286,9 @@ class Admin extends React.Component {
             <Divider />
             <List onClick={this.handleDrawerClose}>
               {this.state.currentPersonaInfo ? (
-                <AdminNavigation />
+                <AdminNavigation
+                  currentPersonaInfo={this.state.currentPersonaInfo}
+                />
               ) : (
                 <CircularProgress />
               )}
@@ -278,8 +296,26 @@ class Admin extends React.Component {
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-
             {this.props.bodyComponent}
+            <Snackbar
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              open={
+                this.props.location !== undefined &&
+                this.props.location.state !== undefined &&
+                this.props.location.state.snackBarOpen !== undefined
+                  ? this.props.location.state.snackBarOpen
+                  : false
+              }
+              message={
+                <span id="message-id">
+                  {this.props.location !== undefined &&
+                  this.props.location.state !== undefined &&
+                  this.props.location.state.snackBarContent !== undefined
+                    ? this.props.location.state.snackBarContent
+                    : ""}
+                </span>
+              }
+            />
           </main>
         </div>
       </React.Fragment>

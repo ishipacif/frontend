@@ -32,15 +32,24 @@ class App extends Component {
               <Route path="/signup" render={props => <Signup {...props} />} />
               <Route
                 path="/nouvelexpertise"
-                render={props => <ExpertiseFrm {...props} />}
+                render={props => (
+                  <Admin
+                    {...props}
+                    bodyComponent={<ExpertiseFrm {...props} />}
+                  />
+                )}
               />
               <Route
                 path="/expertises"
-                render={props => <Expertises {...props} />}
+                render={props => (
+                  <Admin {...props} bodyComponent={<Expertises {...props} />} />
+                )}
               />
               <Route
                 path="/commandes"
-                render={props => <Commande {...props} />}
+                render={props => (
+                  <Admin {...props} bodyComponent={<Commande {...props} />} />
+                )}
               />
               <Route
                 path="/category/:categoryId"
@@ -53,48 +62,50 @@ class App extends Component {
               <Route path="/contact" render={props => <Contact />} />
               <Route
                 path="/ajoutercommande/:planningId"
-                render={props => <OrderFrm {...props} />}
+                render={props => (
+                  <Admin {...props} bodyComponent={<OrderFrm {...props} />} />
+                )}
               />
               <Route path="/login" render={props => <Login {...props} />} />
               <Route
                 exact
-                path="/admin"
+                path="/monespace"
                 render={props => (
                   <Admin {...props} bodyComponent={<Dashboard />} />
                 )}
               />
               <Route
-                path="/admin/persona/:personaType"
+                path="/monespace/persona/:personaType"
                 render={props => (
                   <Admin bodyComponent={<Personas {...props} />} />
                 )}
               />
               <Route
-                path="/admin/personatypes/add"
+                path="/monespace/personatypes/add"
                 render={props => (
                   <Admin bodyComponent={<TypesFrm {...props} />} />
                 )}
               />
               <Route
-                path="/admin/personatypes/edit/:personaTypeId"
+                path="/monespace/personatypes/edit/:personaTypeId"
                 render={props => (
                   <Admin bodyComponent={<TypesFrm {...props} />} />
                 )}
               />
               <Route
-                path="/admin/services"
+                path="/monespace/services"
                 render={props => <Admin bodyComponent={<Services />} />}
               />
               <Route
-                path="/admin/categories"
+                path="/monespace/categories"
                 render={props => <Admin bodyComponent={<Categories />} />}
               />
               <Route
-                path="/admin/profile"
+                path="/monespace/profile"
                 render={props => <Admin bodyComponent={<PersonaProfile />} />}
               />
               <Route
-                path="/admin/gestionpermissions/:personaId"
+                path="/monespace/gestionpermissions/:personaId"
                 render={props => (
                   <Admin
                     bodyComponent={

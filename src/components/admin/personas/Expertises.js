@@ -14,13 +14,7 @@ import MaterialTable from "material-table";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 
-import SiteHeader from "../../../shared/SiteHeader";
-import SiteFooter from "../../../shared/SiteFooter";
 import PersonasData from "../../../data/PersonasData";
-
-// import PlanningData from "../../data/PlanningData";
-// import ServicesData from "../../data/ServicesData";
-// import OrderFrmProps from "../../shared/OrderFrmProps";
 
 const styles = theme => ({
   affected: {
@@ -119,7 +113,6 @@ class Expertises extends Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <SiteHeader />
         <main className={classes.layout}>
           <div className={classes.heroContent}>
             <React.Fragment>
@@ -206,7 +199,6 @@ class Expertises extends Component {
             />
           }
         </main>
-        <SiteFooter />
       </React.Fragment>
     );
   }
