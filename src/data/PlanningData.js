@@ -44,12 +44,12 @@ class PlanningData {
       .json();
   }
 
-  getStatus() {
+  getStatus(personaType) {
+    const param = {};
+    param[personaType] = auth_params.currentUser.person.id;
     return wretch(process.env.REACT_APP_API_URL + "Reservations/search")
       .auth(`Bearer ${auth_params.accessToken}`)
-      .post({
-        customerId: auth_params.currentUser.id
-      })
+      .post(param)
       .json();
   }
 

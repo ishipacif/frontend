@@ -8,6 +8,7 @@ import CategoryServices from "./components/category/CategoryServices";
 import Contact from "./components/contact/Contact";
 import Signup from "./components/signup/Signup";
 import Commande from "./components/planning/Commande";
+import Reservations from "./components/planning/Reservations";
 import OrderFrm from "./components/planning/OrderFrm";
 import Dashboard from "./components/admin/dashboard/Dashboard";
 import Personas from "./components/admin/personas/Personas";
@@ -49,6 +50,15 @@ class App extends Component {
                 path="/commandes"
                 render={props => (
                   <Admin {...props} bodyComponent={<Commande {...props} />} />
+                )}
+              />
+              <Route
+                path="/reservations"
+                render={props => (
+                  <Admin
+                    {...props}
+                    bodyComponent={<Reservations {...props} />}
+                  />
                 )}
               />
               <Route

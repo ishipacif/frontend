@@ -5,13 +5,10 @@ import Typography from "@material-ui/core/Typography";
 // import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 
 import MaterialTable from "material-table";
 
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import Moment from "react-moment";
 import "moment-timezone";
 import "moment/locale/fr";
@@ -20,7 +17,7 @@ import "moment/locale/fr";
 // import SiteFooter from "../../shared/SiteFooter";
 
 import PlanningData from "../../data/PlanningData";
-import OrderFrmProps from "../../shared/OrderFrmProps";
+import PersonasData from "../../data/PersonasData";
 
 const styles = theme => ({
   affected: {
@@ -54,13 +51,12 @@ const styles = theme => ({
   }
 });
 
-class Commande extends Component {
+class Reservations extends Component {
   constructor(props) {
     super(props);
     const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 
     this.state = {
-      professionalList: [],
       statuses: [],
       isAuthenticated: auth_params ? auth_params.isAuthenticated : false,
 
@@ -78,13 +74,13 @@ class Commande extends Component {
           : ""
     };
 
-    this.getStatus("customerId");
+    this.getStatus("professionalId");
   }
 
   async deleteReservation(id) {
     const rawStatus = await PlanningData.deletePlanning(id);
     if (rawStatus !== undefined && rawStatus.status === 200) {
-      this.getStatus("customerId");
+      this.getStatus("professionalId");
     }
     this.setState({
       snackBarOpen: true,
@@ -93,13 +89,12 @@ class Commande extends Component {
   }
 
   async getStatus(personaType) {
-    const professionalList = await OrderFrmProps.getProfessionals();
-    // const services = await ServicesData.getServices();
+    const customersList = await PersonasData.getPersonas("customers");
     const rawStatus = await PlanningData.getStatus(personaType);
-    if (rawStatus !== undefined && professionalList !== undefined) {
+    if (rawStatus !== undefined && customersList !== undefined) {
       const status = rawStatus.map(rawStat => {
-        const persona = professionalList.professionalPersonas.find(
-          prof => prof.id === rawStat.expertise.professionalId
+        const persona = customersList.find(
+          customer => customer.id === rawStat.customerId
         );
 
         return {
@@ -129,11 +124,7 @@ class Commande extends Component {
                   variant="caption"
                   component="i"
                 >
-                  {
-                    persona.expertises.find(
-                      exp => exp.serviceId === rawStat.expertise.serviceId
-                    ).service.title
-                  }
+                  {rawStat.expertise.service.title}
                 </Typography>
               </div>
             </div>
@@ -150,8 +141,7 @@ class Commande extends Component {
         };
       });
       this.setState({
-        statuses: status,
-        professionalList: professionalList.professionalPersonas
+        statuses: status
       });
     }
   }
@@ -189,27 +179,9 @@ class Commande extends Component {
                 color="textPrimary"
                 gutterBottom
               >
-                Mes commandes
+                Résérvations
               </Typography>
-              <Grid
-                container
-                spacing={24}
-                direction="row"
-                justify="flex-end"
-                alignItems="baseline"
-              >
-                <Grid item>
-                  <Button
-                    component={Link}
-                    to={"/ajoutercommande/0"}
-                    variant="outlined"
-                    size="large"
-                    color="primary"
-                  >
-                    Nouvelle commande
-                  </Button>
-                </Grid>
-              </Grid>
+
               <br />
               <MaterialTable
                 data={this.state.statuses}
@@ -223,7 +195,7 @@ class Commande extends Component {
                     field: "heures"
                   },
                   {
-                    title: "Professionel et service",
+                    title: "Client et service",
                     field: "persona"
                   },
                   {
@@ -274,8 +246,8 @@ class Commande extends Component {
   }
 }
 
-Commande.propTypes = {
+Reservations.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Commande);
+export default withStyles(styles)(Reservations);

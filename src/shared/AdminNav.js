@@ -87,11 +87,11 @@ class AdminNavigation extends Component {
               <ListItemText primary="Ajouter un service" />
             </ListItem>
 
-            <ListItem button component={Link} to="/commandes">
+            <ListItem button component={Link} to="/reservations">
               <ListItemIcon>
                 <AssignmentIcon />
               </ListItemIcon>
-              <ListItemText primary="Les commandes" />
+              <ListItemText primary="Les Reservations" />
             </ListItem>
             <Divider />
             <ListItem button component={Link} to="/">
