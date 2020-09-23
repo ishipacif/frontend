@@ -4,7 +4,6 @@ import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import VerticalSplitIcon from "@material-ui/icons/VerticalSplit";
 import PeopleIcon from "@material-ui/icons/People";
-import ReceiptIcon from "@material-ui/icons/Receipt";
 import HomeIcon from "@material-ui/icons/Home";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
