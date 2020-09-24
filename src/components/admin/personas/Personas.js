@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import MaterialTable from "material-table";
 
-import PersonaTypes from "../../../data/PersonaTypes";
+// import PersonaTypes from "../../../data/PersonaTypes";
 import PersonasData from "../../../data/PersonasData";
 
 // import PersonaMenu from "../../../shared/PersonaMenu";
@@ -32,21 +32,21 @@ class Personas extends React.Component {
     this.getPersonas(this.props.match.params.personaType);
   }
 
-  async get_types() {
-    const rawPersonaTypes = await PersonaTypes.getPersonaTypes();
-
-    const personaTypes = rawPersonaTypes.map(function(personaType) {
-      return {
-        id: personaType.id,
-        name: personaType.name,
-        count: personaType.personas.length
-      };
-    });
-
-    this.setState({
-      personaTypes: personaTypes
-    });
-  }
+  // async get_types() {
+  //   const rawPersonaTypes = await PersonaTypes.getPersonaTypes();
+  //
+  //   const personaTypes = rawPersonaTypes.map(function(personaType) {
+  //     return {
+  //       id: personaType.id,
+  //       name: personaType.name,
+  //       count: personaType.personas.length
+  //     };
+  //   });
+  //
+  //   this.setState({
+  //     personaTypes: personaTypes
+  //   });
+  // }
 
   async getPersonas(personaType) {
     const rawPersonas = await PersonasData.getPersonas(personaType);

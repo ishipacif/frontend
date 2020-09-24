@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-// import LinearProgress from "@material-ui/core/LinearProgress";
 import { withStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -51,7 +50,7 @@ const styles = theme => ({
   }
 });
 
-class Reservations extends Component {
+class Facturation extends Component {
   constructor(props) {
     super(props);
     const auth_params = JSON.parse(localStorage.getItem("auth_params"));
@@ -75,14 +74,14 @@ class Reservations extends Component {
       rawStatus: undefined
     };
 
-    this.getStatus("professionalId");
+    this.getAllReservations();
   }
 
   async deleteReservation(id) {
     const rawStatus = await PlanningData.deletePlanning(id);
     if (rawStatus !== undefined) {
       if (rawStatus.status === 200 || rawStatus.status === 204) {
-        this.getStatus("professionalId");
+        this.getAllReservations();
         this.setState({
           snackBarOpen: true,
           snackBarContent: "Reservation annulée"
@@ -100,11 +99,10 @@ class Reservations extends Component {
     }
   }
 
-  makeInvoice(reservationId) {
-    const reservation = this.state.rawStatus.find(
-      reserv => reserv.id === reservationId
+  makeInvoice(reservation) {
+    const professional = this.state.professionalsList.find(
+      prof => prof.id === reservation.expertise.professionalId
     );
-    const professional = reservation.expertise.professional;
 
     const customer = this.state.customersList.find(
       cust => cust.id === reservation.customerId
@@ -215,21 +213,39 @@ class Reservations extends Component {
         align: "center"
       });
     }
-
     return invoiceDoc.save(invoiceName);
   }
 
-  async getStatus(personaType) {
+  async createBill(customerId) {
+    const rawStatus = await PlanningData.createFacture(customerId);
+    if (rawStatus !== undefined) {
+      if (rawStatus.status === 200 || rawStatus.status === 204) {
+        //
+      }
+    }
+  }
+
+  async getAllReservations() {
+    const rawStatus = await PlanningData.getStatus();
     const customersList = await PersonasData.getPersonas("customers");
-    const rawStatus = await PlanningData.getStatus(personaType);
-    if (rawStatus !== undefined && customersList !== undefined) {
+    const professionalsList = await PersonasData.getPersonas("professionals");
+    if (
+      rawStatus !== undefined &&
+      customersList !== undefined &&
+      professionalsList !== undefined
+    ) {
       const status = rawStatus.map(rawStat => {
-        const persona = customersList.find(
-          customer => customer.id === rawStat.customerId
+        const customer = customersList.find(
+          cust => cust.id === rawStat.customerId
         );
 
+        const professional = professionalsList.find(
+          prof => prof.id === rawStat.expertise.professionalId
+        );
         return {
           id: rawStat.id,
+          customerId: customer.id,
+          reservation: rawStat,
           date: (
             <Moment format="DD/MMM/YYYY" locale="fr">
               {rawStat.startTime}
@@ -246,9 +262,13 @@ class Reservations extends Component {
               </Moment>
             </div>
           ),
+
+          professional: (
+            <div>{professional.firstName + " " + professional.lastName}</div>
+          ),
           persona: (
             <div>
-              {persona.firstName + " " + persona.lastName}
+              {customer.firstName + " " + customer.lastName}
               <div>
                 <Typography
                   color="textSecondary"
@@ -274,7 +294,8 @@ class Reservations extends Component {
       this.setState({
         statuses: status,
         rawStatus: rawStatus,
-        customersList: customersList
+        customersList: customersList,
+        professionalsList: professionalsList
       });
     }
   }
@@ -302,7 +323,7 @@ class Reservations extends Component {
       <React.Fragment>
         <CssBaseline />
 
-        <main className={classes.layout}>
+        <main>
           <div className={classes.heroContent}>
             <React.Fragment>
               <Typography
@@ -327,6 +348,7 @@ class Reservations extends Component {
                     title: "Heures",
                     field: "heures"
                   },
+                  { title: "Professional", field: "professional" },
                   {
                     title: "Client et service",
                     field: "persona"
@@ -351,11 +373,27 @@ class Reservations extends Component {
                     }
                   },
                   {
+                    icon: "send",
+                    tooltip: "Créer la facture",
+                    onClick: (event, rowData) => {
+                      if (
+                        rowData.billed === false &&
+                        rowData.status !== "Rejected"
+                      ) {
+                        this.createBill(rowData.customerId);
+                      } else {
+                        alert(
+                          "Vous ne pouvez pas créer un facture pour une reservation facturée ou réjetée"
+                        );
+                      }
+                    }
+                  },
+                  {
                     icon: "picture_as_pdf",
                     tooltip: "Imprimer Facture",
                     onClick: (event, rowData) => {
                       if (rowData.billed) {
-                        this.makeInvoice(rowData.id);
+                        this.makeInvoice(rowData.reservation);
                       } else {
                         alert(
                           "Vous ne pouvez pas imprimer une facture pour une résérvation non facturée ou réjetée"
@@ -371,7 +409,7 @@ class Reservations extends Component {
                   columnsButton: false,
                   filtering: false,
                   toolbar: false,
-                  pageSize: 10
+                  pageSize: 5
                 }}
               />
             </React.Fragment>
@@ -392,8 +430,8 @@ class Reservations extends Component {
   }
 }
 
-Reservations.propTypes = {
+Facturation.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Reservations);
+export default withStyles(styles)(Facturation);

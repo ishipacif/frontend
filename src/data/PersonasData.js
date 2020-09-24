@@ -1,6 +1,21 @@
 import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PersonasData {
+  isErrorsEmpty(obj) {
+    for (let key in obj) {
+      //if the value is 'object'
+      if (obj[key] instanceof Object === true) {
+        if (this.isErrorsEmpty(obj[key]) === false) return false;
+      }
+      //if value is string/number
+      else {
+        //if array or string have length is not 0.
+        if (obj[key].length !== 0) return false;
+      }
+    }
+    return true;
+  }
+
   getPersona(type, id) {
     return wretch(
       process.env.REACT_APP_API_URL +
@@ -8,7 +23,8 @@ class PersonasData {
     )
       .auth(`Bearer ${auth_params.accessToken}`)
       .get()
-      .json();
+      .json()
+      .catch(error => error);
   }
 
   getPersonas(type) {
@@ -26,7 +42,8 @@ class PersonasData {
       process.env.REACT_APP_API_URL + "Professionals/" + id + "/expertises"
     )
       .get()
-      .json();
+      .json()
+      .catch(error => error);
   }
 
   setProfessionalExpertise(params) {
@@ -102,20 +119,20 @@ class PersonasData {
     }
   }
 
-  createUpdatePersonaPermissions(params) {
-    console.log(params);
-    return wretch(process.env.REACT_APP_API_URL + "/permissions/set_access/")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .json(params)
-      .post()
-      .res();
-  }
+  // createUpdatePersonaPermissions(params) {
+  //   console.log(params);
+  //   return wretch(process.env.REACT_APP_API_URL + "/permissions/set_access/")
+  //     .headers({
+  //       "access-token": auth_params.accessToken,
+  //       "token-type": auth_params.tokenType,
+  //       client: auth_params.client,
+  //       expiry: auth_params.expiry,
+  //       uid: auth_params.uid
+  //     })
+  //     .json(params)
+  //     .post()
+  //     .res();
+  // }
 
   authenticatePersona(params) {
     return wretch(process.env.REACT_APP_API_URL + "Auth/login/")
@@ -126,29 +143,29 @@ class PersonasData {
   }
 
   disconnectPersona() {
-    return wretch(process.env.REACT_APP_API_URL + "/personas/sign_out")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .delete()
-      .json();
+    // return wretch(process.env.REACT_APP_API_URL + "/personas/sign_out")
+    //   .headers({
+    //     "access-token": auth_params.accessToken,
+    //     "token-type": auth_params.tokenType,
+    //     client: auth_params.client,
+    //     expiry: auth_params.expiry,
+    //     uid: auth_params.uid
+    //   })
+    //   .delete()
+    //   .json();
   }
 
   isAuthenticated() {
-    return wretch(process.env.REACT_APP_API_URL + "/personas/me")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .post()
-      .json();
+    // return wretch(process.env.REACT_APP_API_URL + "/personas/me")
+    //   .headers({
+    //     "access-token": auth_params.accessToken,
+    //     "token-type": auth_params.tokenType,
+    //     client: auth_params.client,
+    //     expiry: auth_params.expiry,
+    //     uid: auth_params.uid
+    //   })
+    //   .post()
+    //   .json();
   }
 }
 export default new PersonasData();

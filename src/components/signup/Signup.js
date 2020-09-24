@@ -62,21 +62,6 @@ class Signup extends React.Component {
     };
   }
 
-  isErrorsEmpty = obj => {
-    for (let key in obj) {
-      //if the value is 'object'
-      if (obj[key] instanceof Object === true) {
-        if (this.isErrorsEmpty(obj[key]) === false) return false;
-      }
-      //if value is string/number
-      else {
-        //if array or string have length is not 0.
-        if (obj[key].length !== 0) return false;
-      }
-    }
-    return true;
-  };
-
   changePic(url) {
     this.setState({
       pictureToUpload: url
@@ -175,7 +160,9 @@ class Signup extends React.Component {
                           "Les deux mots de passe doivent être identique";
                       }
 
-                      return this.isErrorsEmpty(errors) === true ? {} : errors;
+                      return PersonasData.isErrorsEmpty(errors) === true
+                        ? {}
+                        : errors;
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
                       let response = undefined;

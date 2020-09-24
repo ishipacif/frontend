@@ -7,6 +7,7 @@ import PeopleIcon from "@material-ui/icons/People";
 import HomeIcon from "@material-ui/icons/Home";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
+import ReceiptIcon from "@material-ui/icons/Receipt";
 import Divider from "@material-ui/core/Divider";
 import { Link } from "react-router-dom";
 // import { Can } from "@casl/react";
@@ -50,6 +51,13 @@ class AdminNavigation extends Component {
                 <PeopleIcon />
               </ListItemIcon>
               <ListItemText primary="Professionels" />
+            </ListItem>
+
+            <ListItem button component={Link} to="/monespace/facturation">
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              <ListItemText primary="Facturation" />
             </ListItem>
 
             <Divider />
@@ -111,7 +119,7 @@ class AdminNavigation extends Component {
               </ListItemIcon>
               <ListItemText primary="Acceuil Mon Espace" />
             </ListItem>
-            <ListItem button component={Link} to="/ajoutercommande/0">
+            <ListItem button component={Link} to="/ajoutercommande">
               <ListItemIcon>
                 <AddIcon />
               </ListItemIcon>

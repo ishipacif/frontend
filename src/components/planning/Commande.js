@@ -83,13 +83,24 @@ class Commande extends Component {
 
   async deleteReservation(id) {
     const rawStatus = await PlanningData.deletePlanning(id);
-    if (rawStatus !== undefined && rawStatus.status === 200) {
-      this.getStatus("customerId");
+    if (rawStatus !== undefined) {
+      if (rawStatus.status === 200 || rawStatus.status === 204) {
+        this.getStatus("customerId");
+        this.setState({
+          snackBarOpen: true,
+          snackBarContent: "Reservation annulée"
+        });
+      } else if (
+        rawStatus.status === 404 ||
+        rawStatus.status === 400 ||
+        rawStatus.status === 403
+      ) {
+        this.setState({
+          snackBarOpen: true,
+          snackBarContent: rawStatus.text
+        });
+      }
     }
-    this.setState({
-      snackBarOpen: true,
-      snackBarContent: "Reservation annulée"
-    });
   }
 
   makeInvoice(reservationId) {
@@ -328,7 +339,7 @@ class Commande extends Component {
                 <Grid item>
                   <Button
                     component={Link}
-                    to={"/ajoutercommande/0"}
+                    to={"/ajoutercommande"}
                     variant="outlined"
                     size="large"
                     color="primary"

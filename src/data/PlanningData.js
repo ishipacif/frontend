@@ -1,7 +1,7 @@
 import wretch from "wretch";
 const auth_params = JSON.parse(localStorage.getItem("auth_params"));
 class PlanningData {
-  getFactures(customerId) {
+  createFacture(customerId) {
     return wretch(
       process.env.REACT_APP_API_URL + "Billing/" + customerId + "/createBill"
     )
@@ -28,70 +28,71 @@ class PlanningData {
       .json();
   }
 
-  getCustomerPlannings() {
-    return wretch(process.env.REACT_APP_API_URL + "/plannings/customer")
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .get()
-      .json();
-  }
+  // getCustomerPlannings() {
+  //   return wretch(process.env.REACT_APP_API_URL + "/plannings/customer")
+  //     .headers({
+  //       "access-token": auth_params.accessToken,
+  //       "token-type": auth_params.tokenType,
+  //       client: auth_params.client,
+  //       expiry: auth_params.expiry,
+  //       uid: auth_params.uid
+  //     })
+  //     .get()
+  //     .json();
+  // }
 
   getStatus(personaType) {
     const param = {};
-    param[personaType] = auth_params.currentUser.person.id;
+
+    if (personaType !== "" && personaType !== undefined) {
+      param[personaType] = auth_params.currentUser.person.id;
+    }
+
     return wretch(process.env.REACT_APP_API_URL + "Reservations/search")
       .auth(`Bearer ${auth_params.accessToken}`)
       .post(param)
       .json();
   }
 
-  getStatusById(id) {
-    return wretch(process.env.REACT_APP_API_URL + "/statuses/" + id)
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
-      })
-      .get()
-      .json();
-  }
+  // getStatusById(id) {
+  //   return wretch(process.env.REACT_APP_API_URL + "/statuses/" + id)
+  //     .headers({
+  //       "access-token": auth_params.accessToken,
+  //       "token-type": auth_params.tokenType,
+  //       client: auth_params.client,
+  //       expiry: auth_params.expiry,
+  //       uid: auth_params.uid
+  //     })
+  //     .get()
+  //     .json();
+  // }
 
-  getPlanningById(id) {
-    if (id !== "0") {
-      return wretch(process.env.REACT_APP_API_URL + "/plannings/" + id)
-        .headers({
-          "access-token": auth_params.accessToken,
-          "token-type": auth_params.tokenType,
-          client: auth_params.client,
-          expiry: auth_params.expiry,
-          uid: auth_params.uid
-        })
-        .get()
-        .json();
-    } else {
-      return [];
-    }
-  }
+  // getPlanningById(id) {
+  //   if (id !== "0") {
+  //     return wretch(process.env.REACT_APP_API_URL + "/plannings/" + id)
+  //       .headers({
+  //         "access-token": auth_params.accessToken,
+  //         "token-type": auth_params.tokenType,
+  //         client: auth_params.client,
+  //         expiry: auth_params.expiry,
+  //         uid: auth_params.uid
+  //       })
+  //       .get()
+  //       .json();
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
-  updateStatus(params) {
-    return wretch(process.env.REACT_APP_API_URL + "/plannings/" + params.id)
-      .headers({
-        "access-token": auth_params.accessToken,
-        "token-type": auth_params.tokenType,
-        client: auth_params.client,
-        expiry: auth_params.expiry,
-        uid: auth_params.uid
+  getConfimedReservations() {
+    return wretch(process.env.REACT_APP_API_URL + "Reservations/search/")
+      .auth(`Bearer ${auth_params.accessToken}`)
+      .json({
+        status: "Confirmed"
       })
-      .json(params)
-      .put()
-      .res();
+      .post()
+      .json()
+      .catch(error => error);
   }
 
   deletePlanning(id) {
@@ -100,7 +101,8 @@ class PlanningData {
     )
       .auth(`Bearer ${auth_params.accessToken}`)
       .get()
-      .res();
+      .res()
+      .catch(error => error);
   }
 
   createUpdatePlanning(params) {

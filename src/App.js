@@ -9,6 +9,7 @@ import Contact from "./components/contact/Contact";
 import Signup from "./components/signup/Signup";
 import Commande from "./components/planning/Commande";
 import Reservations from "./components/planning/Reservations";
+import Facturation from "./components/planning/Facturation";
 import OrderFrm from "./components/planning/OrderFrm";
 import Dashboard from "./components/admin/dashboard/Dashboard";
 import Personas from "./components/admin/personas/Personas";
@@ -61,6 +62,17 @@ class App extends Component {
                   />
                 )}
               />
+
+              <Route
+                path="/monespace/facturation"
+                render={props => (
+                  <Admin
+                    {...props}
+                    bodyComponent={<Facturation {...props} />}
+                  />
+                )}
+              />
+
               <Route
                 path="/category/:categoryId"
                 render={props => (
@@ -71,7 +83,7 @@ class App extends Component {
               />
               <Route path="/contact" render={props => <Contact />} />
               <Route
-                path="/ajoutercommande/:planningId"
+                path="/ajoutercommande"
                 render={props => (
                   <Admin {...props} bodyComponent={<OrderFrm {...props} />} />
                 )}

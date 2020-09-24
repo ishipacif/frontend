@@ -99,6 +99,24 @@ class ExpertiseFrm extends React.Component {
                   professionalId: this.state.authParams.currentUser.person.id,
                   hourlyRate: 0
                 }}
+                validate={values => {
+                  let errors = {};
+                  if (!values.categoryId) {
+                    errors.categoryId = "Obligatoire";
+                  }
+                  if (!values.serviceId) {
+                    errors.serviceId = "Obligatoire";
+                  }
+                  if (!values.hourlyRate) {
+                    errors.hourlyRate = "Obligatoire";
+                  }
+                  if (parseInt(values.hourlyRate) <= 0) {
+                    errors.hourlyRate =
+                      "Le prix par heure ne peut pas être inférieur à 0";
+                  }
+
+                  return errors;
+                }}
                 onSubmit={async (values, { setSubmitting }) => {
                   const response = await PersonasData.setProfessionalExpertise(
                     values
@@ -180,6 +198,7 @@ class ExpertiseFrm extends React.Component {
                           disabled={isSubmitting}
                           label="Prix par heure (Euro)"
                           component={TextField}
+                          type="number"
                           required
                         />
                       </Grid>

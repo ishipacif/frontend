@@ -77,17 +77,29 @@ class Expertises extends Component {
     const expertises = await PersonasData.getProfessionalExpertises(id);
 
     if (expertises !== undefined) {
-      const status = expertises.map(rawStat => {
-        return {
-          id: rawStat.id,
-          name: rawStat.service.title,
-          category: rawStat.service.category,
-          prix: rawStat.hourlyRate
-        };
-      });
-      this.setState({
-        statuses: status
-      });
+      if (
+        expertises.status === 400 ||
+        expertises.status === 403 ||
+        expertises.status === 404
+      ) {
+        this.setState({
+          snackBarOpen: true,
+          snackBarContent: expertises.message,
+          toAdmin: true
+        });
+      } else {
+        const status = expertises.map(rawStat => {
+          return {
+            id: rawStat.id,
+            name: rawStat.service.title,
+            category: rawStat.service.category,
+            prix: rawStat.hourlyRate
+          };
+        });
+        this.setState({
+          statuses: status
+        });
+      }
     }
   }
 

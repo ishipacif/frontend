@@ -143,22 +143,17 @@ class Admin extends React.Component {
   };
 
   async disconnectPersona() {
-    // const response = await PersonasData.disconnectPersona();
-
-    // if (response.success === true) {
     localStorage.removeItem("auth_params");
     this.setState({
       currentPersonaInfo: undefined,
       isAuthenticated: false
     });
-    // }
   }
 
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
-
     if (
       this.state.isAuthenticated === false &&
       this.state.currentPersonaInfo === undefined &&

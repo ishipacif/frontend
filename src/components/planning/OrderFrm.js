@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -14,7 +15,6 @@ import { Redirect } from "react-router";
 import PersonasData from "../../data/PersonasData";
 import PlanningData from "../../data/PlanningData";
 import ServicesData from "../../data/ServicesData";
-// import ProfessionalSelectionForm from "../signup/ProfessionalSelectionForm";
 
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
@@ -82,7 +82,6 @@ class OrderFrm extends React.Component {
   }
 
   async fetchProfessionals(serviceId, dateTime, duration) {
-    // console.log(serviceId, dateTime, duration);
     if (serviceId !== undefined && dateTime !== undefined) {
       const prof = await PersonasData.getAvailableProfessionals({
         serviceId: serviceId,
@@ -100,21 +99,6 @@ class OrderFrm extends React.Component {
   render() {
     const { classes } = this.props;
     const { services, professionalPersonas } = this.state;
-
-    // if (this.state.snackBarOpen === true) {
-    //   return (
-    //     <Redirect
-    //       push
-    //       to={{
-    //         pathname: "/commandes",
-    //         state: {
-    //           snackBarOpen: true,
-    //           snackBarContent: this.state.snackBarContent
-    //         }
-    //       }}
-    //     />
-    //   );
-    // }
 
     if (this.state.services.length === 0) {
       return <LinearProgress />;
@@ -153,6 +137,31 @@ class OrderFrm extends React.Component {
                   },
                   startTime: currentDateTime,
                   duration: 0
+                }}
+                validate={values => {
+                  let errors = { expertiseForServiceCreate: {} };
+                  if (!values.categoryId) {
+                    errors.categoryId = "Obligatoire";
+                  }
+                  if (!values.expertiseForServiceCreate.professionalId) {
+                    errors.expertiseForServiceCreate.professionalId =
+                      "Obligatoire";
+                  }
+                  if (!values.expertiseForServiceCreate.serviceId) {
+                    errors.expertiseForServiceCreate.serviceId = "Obligatoire";
+                  }
+
+                  if (!values.duration) {
+                    errors.duration = "Obligatoire";
+                  }
+                  if (parseInt(values.duration) <= 0) {
+                    errors.duration =
+                      "La durée ne peut pas être inférieur à zero";
+                  }
+
+                  return PersonasData.isErrorsEmpty(errors) === true
+                    ? {}
+                    : errors;
                 }}
                 onSubmit={async (values, { setSubmitting }) => {
                   const response = await PlanningData.createUpdatePlanning(
@@ -248,12 +257,18 @@ class OrderFrm extends React.Component {
                           label="Date"
                           required
                           onChange={v => {
-                            this.fetchProfessionals(
-                              values.expertiseForServiceCreate.serviceId,
-                              v,
-                              values.duration
-                            );
-                            setFieldValue("startTime", v);
+                            if (
+                              values.expertiseForServiceCreate.serviceId !== ""
+                            ) {
+                              this.fetchProfessionals(
+                                values.expertiseForServiceCreate.serviceId,
+                                v,
+                                values.duration
+                              );
+                              setFieldValue("startTime", v);
+                            } else {
+                              alert("Veuillez séléctionner un service!");
+                            }
                           }}
                         />
                       </Grid>
@@ -316,6 +331,12 @@ class OrderFrm extends React.Component {
               />
             )}
           </Paper>
+          <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={this.state.snackBarOpen}
+            autoHideDuration={6000}
+            message={<span id="message-id">{this.state.snackBarContent}</span>}
+          />
         </main>
       </React.Fragment>
     );

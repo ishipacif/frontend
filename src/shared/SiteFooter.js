@@ -37,8 +37,8 @@ const footers = [
   {
     title: "Services",
     links: [
-      { href: "/category/2", caption: "L'interieur" },
-      { href: "/category/1", caption: "L'exterieur" }
+      { href: "/category/Interieur", caption: "L'interieur" },
+      { href: "/category/Exterieur", caption: "L'exterieur" }
     ]
   }
 ];
